@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!--
+  diy_nav_bot.urdf.xacro
+  =======================
+  自主移动机器人 diy_nav_bot 的顶层 Xacro 描述。
+  只负责引入各子模块与声明机器人名；所有实际参数在 properties.xacro，
+  所有几何/物理定义在 base.xacro / wheels.xacro / sensors.xacro。
+
+  引用方式：
+    使用 $(find diy_nav_description)/urdf/… ，
+    保证从源码路径和 install 路径都能正确解析。
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro"
+       name="diy_nav_bot">
+
+  <!-- 参数、材质、惯性宏（顺序：先属性 → 材质 → 惯性宏） -->
+  <xacro:include filename="$(find diy_nav_description)/urdf/properties.xacro"/>
+  <xacro:include filename="$(find diy_nav_description)/urdf/materials.xacro"/>
+  <xacro:include filename="$(find diy_nav_description)/urdf/inertial_macros.xacro"/>
+
+  <!-- 机器人部件（顺序：底盘 → 轮子 → 传感器；轮子/传感器依赖 base_link） -->
+  <xacro:include filename="$(find diy_nav_description)/urdf/base.xacro"/>
+  <xacro:include filename="$(find diy_nav_description)/urdf/wheels.xacro"/>
+  <xacro:include filename="$(find diy_nav_description)/urdf/sensors.xacro"/>
+
+</robot>

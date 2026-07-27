@@ -1,6 +1,6 @@
 # diy_nav_description
-# 机器人 URDF/Xacro 描述、meshes 与 RViz 配置包。
-# 该包不包含 C++/Python 源码，仅安装资源目录。
+# 机器人 URDF/Xacro 描述、meshes、RViz 配置与 display launch。
+# 该包不包含 C++/Python 源码，仅安装资源目录与验证脚本。
 cmake_minimum_required(VERSION 3.8)
 project(diy_nav_description)
 
@@ -11,8 +11,9 @@ endif()
 # 查找构建工具
 find_package(ament_cmake REQUIRED)
 
+# ------------------------------------------------------------
 # 安装资源目录到 share/${PROJECT_NAME}/
-# 使用 DIRECTORY 形式；缺失目录不会导致失败（CMake 会跳过空目录）
+# ------------------------------------------------------------
 install(
   DIRECTORY
     launch
@@ -20,6 +21,21 @@ install(
     meshes
     rviz
   DESTINATION share/${PROJECT_NAME}/
+)
+
+# README 直接放到 share 顶层，便于用户从 install 路径查阅
+install(
+  FILES README.md
+  DESTINATION share/${PROJECT_NAME}/
+)
+
+# ------------------------------------------------------------
+# 安装可执行验证脚本到 lib/${PROJECT_NAME}
+# ros2 run diy_nav_description validate_description.sh 可调用
+# ------------------------------------------------------------
+install(
+  PROGRAMS scripts/validate_description.sh
+  DESTINATION lib/${PROJECT_NAME}
 )
 
 if(BUILD_TESTING)

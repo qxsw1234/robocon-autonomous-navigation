@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<!--
+  diy_nav_bot / wheels.xacro
+  ===========================
+  左右驱动轮（continuous）和后万向轮（球体近似，fixed）。
+
+  轮子几何设计：
+    - <cylinder> 的默认轴向沿 z；为了让轮子转轴沿 y（机器人左右方向），
+      visual / collision / inertial 三者都通过 rpy="1.5708 0 0" 将圆柱
+      绕 x 轴旋转 90° —— 此时圆柱轴从 z 转到 y。
+    - Joint 的 <axis xyz="0 1 0"/> 描述“旋转轴在关节 origin 中的方向”，
+      与 y 一致。
+    - Link 原点 z = 0（轮心与 base_link 同高，因为 base_link 已经通过
+      base_link_z_offset = wheel_radius + base_height/2 抬升到位）。
+
+  说明：
+    base_link_z_offset (0.135) = base_height/2 (0.06) + wheel_radius (0.075)
+    所以轮心相对 base_link 的 z 偏移为 -base_height/2 = -0.06，
+    但由于我们让 base_link 位于底盘中心而非底盘底面，最直接的做法是
+    让轮子中心沿 z 方向偏移 -(base_height/2) —— 见 origin 设置。
+
+  尺寸：wheel_radius=0.075, wheel_width=0.035, wheel_separation=0.31
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- ========== 通用轮子宏 ========== -->
+  <xacro:macro name="diy_wheel" params="prefix y_sign">
+    <link name="${prefix}_wheel_link">
+      <visual>
+        <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
+        <geometry>
+          <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+        </geometry>
+        <material name="diy_black"/>
+      </visual>
+      <collision>
+        <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
+        <geometry>
+          <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+        </geometry>
+      </collision>
+      <xacro:cylinder_inertial
+        mass="${wheel_mass}"
+        radius="${wheel_radius}"
+        length="${wheel_width}">
+        <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
+      </xacro:cylinder_inertial>
+    </link>
+
+    <!-- 轮心 y = ±wheel_separation/2；轮心 z 相对 base_link 为 -base_height/2
+         使轮心与地面高度 = wheel_radius（正好接触地面）。 -->
+    <joint name="${prefix}_wheel_joint" type="continuous">
+      <parent link="base_link"/>
+      <child  link="${prefix}_wheel_link"/>
+      <origin
+        xyz="${wheel_x_offset} ${y_sign * wheel_separation / 2} ${-base_height/2}"
+        rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+      <dynamics damping="0.01" friction="0.01"/>
+    </joint>
+  </xacro:macro>
+
+  <!-- 左右轮：REP-103 中 y 轴朝左，因此左轮 y_sign=+1 -->
+  <xacro:diy_wheel prefix="left"  y_sign="1"/>
+  <xacro:diy_wheel prefix="right" y_sign="-1"/>
+
+  <!-- ========== 后万向轮（球体近似，fixed joint） ==========
+       本阶段仅作为静态外观和坐标参考；后续 Gazebo 物理仿真阶段
+       会根据摩擦和接触测试重新评估是否需要真实自由度。 -->
+  <link name="rear_caster_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <sphere radius="${caster_radius}"/>
+      </geometry>
+      <material name="diy_black"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <sphere radius="${caster_radius}"/>
+      </geometry>
+    </collision>
+    <xacro:sphere_inertial
+      mass="${caster_mass}"
+      radius="${caster_radius}">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </xacro:sphere_inertial>
+  </link>
+
+  <!-- caster 球心 z 相对 base_link = -(base_link_z_offset - caster_radius)
+       即让球心离地 = caster_radius。 -->
+  <joint name="rear_caster_joint" type="fixed">
+    <parent link="base_link"/>
+    <child  link="rear_caster_link"/>
+    <origin
+      xyz="${caster_x_offset} 0 ${-(base_link_z_offset - caster_radius)}"
+      rpy="0 0 0"/>
+  </joint>
+
+</robot>

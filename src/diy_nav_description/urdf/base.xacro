@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+<!--
+  diy_nav_bot / base.xacro
+  =========================
+  实现 base_footprint、base_link、chassis_link 和 upper_body_link。
+  只提供机器人的静态几何（visual / collision / inertial 与 fixed joints），
+  不含运动学关节、传感器或 Gazebo 插件。
+
+  坐标关系：
+    base_footprint  : 地面投影中心（z=0）
+    base_link       : 抬升 base_link_z_offset（0.135 m），位于底盘几何中心
+    chassis_link    : 与 base_link 同原点（fixed），box 0.46×0.34×0.12
+    upper_body_link : chassis 上方，中心 z=base_height/2 + upper_height/2
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- ========== base_footprint ==========
+       无 visual/collision/inertial，仅作为机器人在地面上的二维参考。 -->
+  <link name="base_footprint"/>
+
+  <!-- ========== base_footprint -> base_link ==========
+       fixed joint，将 base_link 抬升到底盘几何中心的合适高度。 -->
+  <joint name="base_footprint_to_base_link" type="fixed">
+    <parent link="base_footprint"/>
+    <child  link="base_link"/>
+    <origin xyz="0 0 ${base_link_z_offset}" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ========== base_link ==========
+       机器人主体参考坐标系；本 Link 本身没有几何，几何由 chassis_link
+       承担。此设计让 base_link 保持“纯参考坐标”的语义。
+       但由于每个 Link 至少需要有 inertial 才被 URDF 视为合法物理体，
+       为避免歧义此处不加 inertial（base_link 仅充当参考帧）。 -->
+  <link name="base_link"/>
+
+  <!-- ========== chassis_link ==========
+       主底盘：box 几何 + 惯性。 -->
+  <link name="chassis_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${base_length} ${base_width} ${base_height}"/>
+      </geometry>
+      <material name="diy_blue"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${base_length} ${base_width} ${base_height}"/>
+      </geometry>
+    </collision>
+    <xacro:box_inertial
+      mass="${base_mass}"
+      x="${base_length}"
+      y="${base_width}"
+      z="${base_height}">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </xacro:box_inertial>
+  </link>
+
+  <joint name="base_link_to_chassis" type="fixed">
+    <parent link="base_link"/>
+    <child  link="chassis_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ========== upper_body_link ==========
+       上盖：位于底盘顶部（沿 z 正方向）。 -->
+  <link name="upper_body_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${upper_length} ${upper_width} ${upper_height}"/>
+      </geometry>
+      <material name="diy_dark"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${upper_length} ${upper_width} ${upper_height}"/>
+      </geometry>
+    </collision>
+    <xacro:box_inertial
+      mass="${upper_mass}"
+      x="${upper_length}"
+      y="${upper_width}"
+      z="${upper_height}">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </xacro:box_inertial>
+  </link>
+
+  <joint name="chassis_to_upper_body" type="fixed">
+    <parent link="chassis_link"/>
+    <child  link="upper_body_link"/>
+    <origin
+      xyz="0 0 ${base_height/2 + upper_height/2}"
+      rpy="0 0 0"/>
+  </joint>
+
+</robot>

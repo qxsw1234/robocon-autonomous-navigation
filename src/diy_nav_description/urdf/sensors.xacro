@@ -1,0 +1,127 @@
+<?xml version="1.0"?>
+<!--
+  diy_nav_bot / sensors.xacro
+  ============================
+  本阶段仅创建激光雷达和 IMU 的几何外观与坐标系，
+  不加入任何 <gazebo> 标签或传感器插件（留待阶段 5）。
+
+  层级：
+    base_link
+      └── laser_mount_link  (chassis→upper 上方的圆柱底座)
+            └── laser_link  (激光扫描平面参考帧)
+      └── imu_link         (底盘中心附近的小盒体)
+
+  坐标：
+    laser_mount 中心相对 base_link 的 z 偏移：
+      base_height/2 + upper_height + laser_mount_height/2
+    laser_link 位于 mount 顶面上方 laser_link_height/2
+
+    IMU 中心：z = 0（与 base_link 同高，安装在底盘中心附近）
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- ========== laser_mount_link ==========
+       圆柱底座，将雷达从上盖顶面抬起，形成扫描高度。 -->
+  <link name="laser_mount_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="${laser_mount_radius}"
+                  length="${laser_mount_height}"/>
+      </geometry>
+      <material name="diy_gray"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="${laser_mount_radius}"
+                  length="${laser_mount_height}"/>
+      </geometry>
+    </collision>
+    <xacro:cylinder_inertial
+      mass="${laser_mount_mass}"
+      radius="${laser_mount_radius}"
+      length="${laser_mount_height}">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </xacro:cylinder_inertial>
+  </link>
+
+  <joint name="laser_mount_joint" type="fixed">
+    <parent link="base_link"/>
+    <child  link="laser_mount_link"/>
+    <origin
+      xyz="0 0 ${base_height/2 + upper_height + laser_mount_height/2}"
+      rpy="0 0 0"/>
+  </joint>
+
+  <!-- ========== laser_link ==========
+       激光扫描参考帧（x 前、y 左、z 上）。visual 为很扁的圆柱以体现顶盖。 -->
+  <link name="laser_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="${laser_link_radius}"
+                  length="${laser_link_height}"/>
+      </geometry>
+      <material name="diy_lidar"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <cylinder radius="${laser_link_radius}"
+                  length="${laser_link_height}"/>
+      </geometry>
+    </collision>
+    <xacro:cylinder_inertial
+      mass="${laser_link_mass}"
+      radius="${laser_link_radius}"
+      length="${laser_link_height}">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </xacro:cylinder_inertial>
+  </link>
+
+  <joint name="laser_joint" type="fixed">
+    <parent link="laser_mount_link"/>
+    <child  link="laser_link"/>
+    <origin
+      xyz="0 0 ${laser_mount_height/2 + laser_link_height/2}"
+      rpy="0 0 0"/>
+  </joint>
+
+  <!-- ========== imu_link ==========
+       小盒体，安装在底盘中心附近；轴向与 base_link 一致。 -->
+  <link name="imu_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${imu_length} ${imu_width} ${imu_height}"/>
+      </geometry>
+      <material name="diy_red"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="${imu_length} ${imu_width} ${imu_height}"/>
+      </geometry>
+    </collision>
+    <xacro:box_inertial
+      mass="${imu_mass}"
+      x="${imu_length}"
+      y="${imu_width}"
+      z="${imu_height}">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </xacro:box_inertial>
+  </link>
+
+  <!-- IMU 放置在底盘内部几何中心（x=0, y=0, z=0）：
+       - 位于 base_link 原点，即底盘几何中心
+       - 完全嵌入底盘 box 内，无穿模；便于建模且轴向与 base_link 一致 -->
+  <joint name="imu_joint" type="fixed">
+    <parent link="base_link"/>
+    <child  link="imu_link"/>
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0"/>
+  </joint>
+
+</robot>

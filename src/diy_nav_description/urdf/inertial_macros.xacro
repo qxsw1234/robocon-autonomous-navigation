@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<!--
+  diy_nav_bot / inertial_macros.xacro
+  ====================================
+  提供盒体、圆柱、球体的惯性宏。避免每个 Link 手写惯性张量。
+
+  公式（相对几何中心，主轴对齐 xyz）：
+
+    盒体（box, size x×y×z, mass m）:
+      Ixx = m (y² + z²) / 12
+      Iyy = m (x² + z²) / 12
+      Izz = m (x² + y²) / 12
+
+    实心圆柱（cylinder, radius r, length h, mass m, 轴沿 z）:
+      Ixx = Iyy = m (3 r² + h²) / 12
+      Izz = m r² / 2
+
+    实心球（sphere, radius r, mass m）:
+      Ixx = Iyy = Izz = 2 m r² / 5
+
+  说明：
+    - 所有宏都提供一个可选的 origin xyz/rpy 用于将惯性坐标系对齐到
+      Link 中的几何摆放。
+    - 惯性张量非对角项固定为 0，因为几何都对称。
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- ========== BOX inertial ========== -->
+  <xacro:macro name="box_inertial"
+               params="mass x y z
+                       *origin">
+    <inertial>
+      <xacro:insert_block name="origin"/>
+      <mass value="${mass}"/>
+      <inertia
+        ixx="${mass * (y*y + z*z) / 12.0}"
+        iyy="${mass * (x*x + z*z) / 12.0}"
+        izz="${mass * (x*x + y*y) / 12.0}"
+        ixy="0.0" ixz="0.0" iyz="0.0"/>
+    </inertial>
+  </xacro:macro>
+
+  <!-- ========== CYLINDER inertial (轴沿 z) ==========
+       轮子等需要让轴沿 y 的元件，请在调用时用 origin 的 rpy 旋转，
+       与 visual/collision 的 origin 保持一致。 -->
+  <xacro:macro name="cylinder_inertial"
+               params="mass radius length
+                       *origin">
+    <inertial>
+      <xacro:insert_block name="origin"/>
+      <mass value="${mass}"/>
+      <inertia
+        ixx="${mass * (3.0 * radius * radius + length * length) / 12.0}"
+        iyy="${mass * (3.0 * radius * radius + length * length) / 12.0}"
+        izz="${mass * radius * radius / 2.0}"
+        ixy="0.0" ixz="0.0" iyz="0.0"/>
+    </inertial>
+  </xacro:macro>
+
+  <!-- ========== SPHERE inertial ========== -->
+  <xacro:macro name="sphere_inertial"
+               params="mass radius
+                       *origin">
+    <inertial>
+      <xacro:insert_block name="origin"/>
+      <mass value="${mass}"/>
+      <inertia
+        ixx="${2.0 * mass * radius * radius / 5.0}"
+        iyy="${2.0 * mass * radius * radius / 5.0}"
+        izz="${2.0 * mass * radius * radius / 5.0}"
+        ixy="0.0" ixz="0.0" iyz="0.0"/>
+    </inertial>
+  </xacro:macro>
+
+</robot>
