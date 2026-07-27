@@ -34,3 +34,4 @@ src/diy_nav_slam_compare/results/raw/
 # --- 本地构建/依赖检查日志 ---
 log_colcon_build.txt
 log_rosdep_check.txt
+log_*.txt
