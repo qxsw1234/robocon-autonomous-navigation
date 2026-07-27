@@ -1,15 +1,17 @@
-"""diy_nav_slam_compare.cli
+"""
+Skeleton CLI for the diy_nav_slam_compare package.
 
-骨架阶段占位 CLI。仅打印包名、版本和当前实现状态，
-后续阶段将替换为真正的 SLAM 比较入口（录制/回放/指标计算）。
+Prints the package name, version, and current implementation status.
+Later stages will replace this with a real SLAM comparison entry point
+(recording, replay, metric computation).
 """
 
 from __future__ import annotations
 
 
 def main() -> int:
-    """占位入口，返回 0 表示 CLI 可正常调用。"""
-    print('diy_nav_slam_compare v0.1.0 — skeleton stage')
+    """Return 0 to signal the placeholder CLI is reachable."""
+    print('diy_nav_slam_compare v0.1.0 - skeleton stage')
     print('CLI placeholder; benchmark commands will be added in later stages.')
     return 0
 

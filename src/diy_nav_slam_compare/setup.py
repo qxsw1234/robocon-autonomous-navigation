@@ -1,10 +1,12 @@
-"""setup.py — diy_nav_slam_compare
+"""
+Setuptools entry for diy_nav_slam_compare.
 
-Python 软件包安装脚本。除了默认的 resource / package.xml 之外，
-还安装 launch/config/scripts 三个资源目录到 share/。
+Besides the default resource / package.xml, this installs the launch,
+config and scripts directories into share/.
 
-console_scripts 目前提供一个占位 CLI（slam_compare_cli），会在后续阶段
-被具体的比较工具替换。
+The console_scripts entry currently exposes only a placeholder CLI
+(slam_compare_cli), which will be replaced by real comparison tools
+in later stages.
 """
 
 import os
@@ -16,7 +18,7 @@ package_name = 'diy_nav_slam_compare'
 
 
 def _files_in(directory, pattern='*'):
-    """收集 directory 下匹配 pattern 的文件；目录不存在或空时返回空列表。"""
+    """Collect files under `directory` matching `pattern`."""
     if not os.path.isdir(directory):
         return []
     return [f for f in glob(os.path.join(directory, pattern)) if os.path.isfile(f)]
