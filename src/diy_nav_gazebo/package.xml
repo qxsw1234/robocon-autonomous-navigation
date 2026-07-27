@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<!--
+  diy_nav_gazebo
+  Gazebo Classic 11 世界、模型、传感器插件配置与仿真启动文件。
+  依赖 diy_nav_description 提供的机器人模型。
+-->
+<package format="3">
+  <name>diy_nav_gazebo</name>
+  <version>0.1.0</version>
+  <description>
+    Gazebo Classic 11 worlds, models, plugin configurations and simulation
+    launch files for diy_nav_bot. Consumes the robot model provided by
+    diy_nav_description.
+  </description>
+  <maintainer email="czm@example.com">czm</maintainer>
+  <license>Apache-2.0</license>
+
+  <!-- 构建工具 -->
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <!-- 运行时依赖：Gazebo Classic 11 + gazebo_ros_pkgs 生态 -->
+  <exec_depend>gazebo_ros</exec_depend>
+  <exec_depend>gazebo_ros_pkgs</exec_depend>
+  <exec_depend>gazebo_plugins</exec_depend>
+  <exec_depend>gazebo_msgs</exec_depend>
+  <!-- 机器人描述与 TF -->
+  <exec_depend>diy_nav_description</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>xacro</exec_depend>
+  <exec_depend>ros2launch</exec_depend>
+
+  <!-- 测试依赖 -->
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

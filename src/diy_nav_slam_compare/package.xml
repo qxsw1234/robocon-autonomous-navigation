@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<!--
+  diy_nav_slam_compare
+  SLAM Toolbox 与 Cartographer 建图效果比较工具。
+  包含数据录制/回放脚本、指标计算节点、比较报告生成器。
+-->
+<package format="3">
+  <name>diy_nav_slam_compare</name>
+  <version>0.1.0</version>
+  <description>
+    SLAM comparison utilities for diy_nav_bot: benchmark SLAM Toolbox and
+    Cartographer under identical inputs, compute metrics and generate reports.
+  </description>
+  <maintainer email="czm@example.com">czm</maintainer>
+  <license>Apache-2.0</license>
+
+  <!-- Python 包运行时依赖 -->
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>nav_msgs</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>tf2_ros</exec_depend>
+  <exec_depend>slam_toolbox</exec_depend>
+  <exec_depend>cartographer_ros</exec_depend>
+  <exec_depend>nav2_map_server</exec_depend>
+  <exec_depend>ros2launch</exec_depend>
+  <exec_depend>ros2bag</exec_depend>
+  <exec_depend>python3-yaml</exec_depend>
+
+  <!-- 测试依赖（由 ros2 pkg create ament_python 默认生成） -->
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <test_depend>python3-pytest</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

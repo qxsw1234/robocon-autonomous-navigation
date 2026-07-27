@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<!--
+  diy_nav_description
+  URDF/Xacro 描述、meshes、RViz 配置。
+  仅包含机器人静态描述；不含仿真世界或导航参数。
+-->
+<package format="3">
+  <name>diy_nav_description</name>
+  <version>0.1.0</version>
+  <description>
+    URDF/Xacro description, meshes and RViz configs for the DIY autonomous
+    navigation robot (diy_nav_bot). Provides only the robot static description;
+    no Gazebo worlds or navigation parameters.
+  </description>
+  <maintainer email="czm@example.com">czm</maintainer>
+  <license>Apache-2.0</license>
+
+  <!-- 构建工具 -->
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <!-- 运行时依赖：URDF 处理与 TF 发布 -->
+  <exec_depend>xacro</exec_depend>
+  <exec_depend>urdf</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>joint_state_publisher</exec_depend>
+  <exec_depend>joint_state_publisher_gui</exec_depend>
+  <exec_depend>rviz2</exec_depend>
+  <exec_depend>ros2launch</exec_depend>
+
+  <!-- 测试依赖 -->
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
