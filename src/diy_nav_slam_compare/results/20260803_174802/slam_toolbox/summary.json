@@ -1,0 +1,21 @@
+{
+  "map_size": {
+    "width": 322,
+    "height": 242,
+    "resolution": 0.05000000074505806
+  },
+  "coverage": {
+    "occupied_px": 4239,
+    "free_px": 73685,
+    "unknown_px": 0,
+    "total_px": 77924,
+    "occupied_ratio": 0.0544,
+    "free_ratio": 0.9456,
+    "unknown_ratio": 0.0
+  },
+  "clarity": {
+    "wall_edge_thickness_px_median": 5.0,
+    "corridor_noise_px": 59,
+    "north_wall_segments": 1
+  }
+}

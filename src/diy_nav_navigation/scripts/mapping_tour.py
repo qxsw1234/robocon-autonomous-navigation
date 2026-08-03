@@ -104,14 +104,14 @@ ROUTE = [
 
 
 class Tour(Node):
-    def __init__(self):
+    def __init__(self, need_map=True):
         super().__init__('mapping_tour')
         self.pub = self.create_publisher(Twist, '/cmd_vel', 10)
         self.pose = None
         self.map_received = False
         self.create_subscription(Odometry, '/odom', self._on_odom, 10)
         self.create_subscription(OccupancyGrid, '/map', self._on_map, 10)
-        self._wait_ready()
+        self._wait_ready(need_map=need_map)
 
     def _on_odom(self, m):
         q = m.pose.pose.orientation
@@ -122,15 +122,20 @@ class Tour(Node):
     def _on_map(self, _):
         self.map_received = True
 
-    def _wait_ready(self, timeout=30.0):
-        """等待：/odom 有数据 + SLAM 已发布 /map（map→odom TF 就绪的间接证据）。"""
+    def _wait_ready(self, timeout=30.0, need_map=True):
+        """等待：/odom 有数据（need_map 时还需 SLAM 已发布 /map）。"""
         t0 = time.time()
         while time.time() - t0 < timeout:
             rclpy.spin_once(self, timeout_sec=0.1)
-            if self.pose is not None and self.map_received:
-                self.get_logger().info('SLAM 已就绪（/map 到达），开始巡航')
+            if self.pose is not None and (not need_map or self.map_received):
+                self.get_logger().info(
+                    '就绪（/odom 有数据' + (' + /map 到达' if need_map else '') +
+                    '），开始巡航')
                 return
-        raise RuntimeError('超时：/odom 或 /map 无数据（仿真与 slam_toolbox 是否已启动？）')
+        raise RuntimeError(
+            '超时：/odom 无数据（仿真是否已启动？）'
+            if not need_map else
+            '超时：/odom 或 /map 无数据（仿真与 slam_toolbox 是否已启动？）')
 
     def go_to_goal(self, tx, ty, slow=False, kp=2.0):
         lin = 0.15 if slow else 0.25
@@ -157,8 +162,13 @@ class Tour(Node):
 
 
 def main():
+    import argparse
+    parser = argparse.ArgumentParser(description='建图巡航路线')
+    parser.add_argument('--no-map-check', action='store_true',
+                        help='不等待 /map（录制 bag 等仅仿真场景）')
+    args, _ = parser.parse_known_args()
     rclpy.init()
-    tour = Tour()
+    tour = Tour(need_map=not args.no_map_check)
     total_wp = len(ROUTE)
     failed = 0
     t_start = time.time()

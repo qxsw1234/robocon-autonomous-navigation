@@ -1,0 +1,6 @@
+goal_index,goal_name,goal_x,goal_y,success,planning_time_s,navigation_time_s,recovery_count,min_scan_range_m,failure_reason
+1,走廊东端（开阔）,7.5,0.0,no,,0.02,0,99.000,FAILED
+2,R2 房间内（U 形障碍）,6.5,4.5,no,,0.02,0,99.000,FAILED
+3,R1 窄门口另一侧,-2.2,1.5,no,,0.02,0,99.000,FAILED
+4,R3 西南角（遮挡区）,-6.5,-4.5,no,,13.47,5,0.615,FAILED
+5,回起点,0.0,0.0,yes,,14.16,7,0.505,

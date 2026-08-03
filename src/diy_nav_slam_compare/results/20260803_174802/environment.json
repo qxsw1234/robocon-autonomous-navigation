@@ -1,0 +1,35 @@
+{
+  "experiment": "SLAM Toolbox vs Cartographer 公平对比（阶段 13）",
+  "date": "2026-08-03",
+  "environment": {
+    "os": "Ubuntu 22.04.4",
+    "ros2": "Humble",
+    "gazebo": "Gazebo Classic 11.10.2",
+    "slam_toolbox": "2.6.10",
+    "cartographer_ros": "2.0.9",
+    "nav2": "1.1.20",
+    "cpu": "x86_64"
+  },
+  "world": "complex_world.world (16x12 m, 四房间+走廊+窄门口0.8m+U/L障碍+遮挡区)",
+  "bag": "results/bags/mapping_20260803_173441 (582 s, 50/50 航点, 105 MB)",
+  "sensors": {
+    "laser": "/scan_slam (RELIABLE 双发布, 720 samples, 10 Hz, 0.30~8.0 m 过滤后)",
+    "odom": "/odom (差速驱动, 30 Hz)",
+    "tf": "/tf + /tf_static (同一 bag 回放)"
+  },
+  "fairness_notes": [
+    "两算法回放同一 rosbag（--clock 提供仿真时间，use_sim_time=true）",
+    "同出生点、同 50 航点路线、同运动数据",
+    "cartographer use_imu_data=false 与 slam_toolbox 对齐",
+    "min_range/max_range 均 0.30/8.0",
+    "地图为离线回放原始产物（未清理），导航试验直接使用",
+    "导航：同一 nav2_params.yaml、同 5 目标、每图 3 轮"
+  ],
+  "nav_trials": {
+    "goals": ["(7.5,0) 走廊东端", "(6.5,4.5) R2 房间", "(-2.2,1.5) R1 窄门口",
+              "(-6.5,-4.5) R3 西南角", "(0,0) 回起点"],
+    "repetitions": 3,
+    "total_per_map": 15,
+    "params": "diy_nav_navigation/config/nav2_params.yaml"
+  }
+}
