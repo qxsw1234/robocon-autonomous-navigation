@@ -9,7 +9,7 @@
 #   3. amcl：scan_topic=/scan、laser_max_range=8.0（对齐激光量程）、
 #      laser_min_range=0.13（滤除车体自遮挡瞬态）
 #   4. 障碍层：obstacle_max_range=6.0、raytrace_max_range=8.0
-#   5. 膨胀层：inflation_radius=0.2、cost_scaling_factor=8.0（阶段 10 调优第 1 轮）
+#   5. 膨胀层：inflation_radius=0.5、cost_scaling_factor=5.0
 #      （兼顾 0.8 m 窄门口：门口中心距墙 0.4 m，成本需非致命）
 #   6. 目标容差 0.25→0.2；其余保持 Humble 官方稳定默认
 # 所有节点 use_sim_time: true。
@@ -17,11 +17,11 @@
 amcl:
   ros__parameters:
     use_sim_time: True
-    alpha1: 0.01  # 运动噪声趋零（阶段 10 R3）：仿真里程计为真值，
-    alpha2: 0.01  # 粒子紧贴里程计，扫描匹配只做微校正，长路线信念
-    alpha3: 0.01  # 不再被似然场拉偏（R1 门口通过后信念塌缩走错方向的根因）
-    alpha4: 0.01
-    alpha5: 0.01
+    alpha1: 0.05  # 运动噪声极低（仿真里程计为真值）：粒子紧贴里程计，
+    alpha2: 0.05  # 走廊纵向弱约束下不散布，信念=物理+初始偏移
+    alpha3: 0.05
+    alpha4: 0.05
+    alpha5: 0.05
     base_frame_id: "base_footprint"
     beam_skip_distance: 0.5
     beam_skip_error_threshold: 0.9
@@ -142,23 +142,23 @@ controller_server:
       plugin: "nav2_controller::SimpleProgressChecker"
       required_movement_radius: 0.5
       movement_time_allowance: 10.0
-    # 目标检查器：xy/偏航容差 0.35 m / 0.25 rad（R3 放宽，容忍小信念误差）
+    # 目标检查器：xy/偏航容差 0.2 m / 0.2 rad
     general_goal_checker:
       stateful: True
       plugin: "nav2_controller::SimpleGoalChecker"
-      xy_goal_tolerance: 0.35
-      yaw_goal_tolerance: 0.25
+      xy_goal_tolerance: 0.2
+      yaw_goal_tolerance: 0.2
     # 局部规划器：DWB（Humble 官方稳定默认）
     FollowPath:
       plugin: "dwb_core::DWBLocalPlanner"
       debug_trajectory_details: True
       min_vel_x: 0.0
       min_vel_y: 0.0
-      max_vel_x: 0.22
+      max_vel_x: 0.26
       max_vel_y: 0.0
       max_vel_theta: 1.0
       min_speed_xy: 0.0
-      max_speed_xy: 0.22
+      max_speed_xy: 0.26
       min_speed_theta: 0.0
       acc_lim_x: 2.5
       acc_lim_y: 0.0
@@ -169,11 +169,11 @@ controller_server:
       vx_samples: 20
       vy_samples: 5
       vtheta_samples: 20
-      sim_time: 1.0
+      sim_time: 1.7
       linear_granularity: 0.05
       angular_granularity: 0.025
       transform_tolerance: 0.2
-      xy_goal_tolerance: 0.35
+      xy_goal_tolerance: 0.25
       trans_stopped_velocity: 0.25
       short_circuit_trajectory_evaluation: True
       stateful: True
@@ -205,8 +205,8 @@ local_costmap:
       plugins: ["voxel_layer", "inflation_layer"]
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
-        cost_scaling_factor: 8.0
-        inflation_radius: 0.2
+        cost_scaling_factor: 5.0
+        inflation_radius: 0.5
       voxel_layer:
         plugin: "nav2_costmap_2d::VoxelLayer"
         enabled: True
@@ -263,8 +263,8 @@ global_costmap:
         map_subscribe_transient_local: True
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
-        cost_scaling_factor: 8.0
-        inflation_radius: 0.2
+        cost_scaling_factor: 5.0
+        inflation_radius: 0.5
       always_send_full_costmap: True
 
 map_server:
@@ -333,8 +333,8 @@ velocity_smoother:
     smoothing_frequency: 20.0
     scale_velocities: False
     feedback: "OPEN_LOOP"
-    max_velocity: [0.22, 0.0, 1.0]
-    min_velocity: [-0.22, 0.0, -1.0]
+    max_velocity: [0.26, 0.0, 1.0]
+    min_velocity: [-0.26, 0.0, -1.0]
     max_accel: [2.5, 0.0, 3.2]
     max_decel: [-2.5, 0.0, -3.2]
     odom_topic: "odom"
