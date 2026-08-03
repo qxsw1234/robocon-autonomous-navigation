@@ -40,6 +40,9 @@ setup(
         # 配置文件
         (os.path.join('share', package_name, 'config'),
             _files_in('config', '*.yaml') + _files_in('config', '*.lua')),
+        # RViz 配置
+        (os.path.join('share', package_name, 'rviz'),
+            _files_in('rviz', '*.rviz')),
         # 辅助脚本（也可通过 lib/ 安装，这里放到 share 便于查阅）
         (os.path.join('share', package_name, 'scripts'),
             _files_in('scripts')),
