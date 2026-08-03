@@ -59,6 +59,8 @@ def generate_launch_description():
         DeclareLaunchArgument('rviz', default_value='true'),
         DeclareLaunchArgument('headless', default_value='false'),
         DeclareLaunchArgument('use_sim_time', default_value='true'),
+        # gzserver 异常退出时是否关闭整个 launch（一键 bringup 的清理机制）
+        DeclareLaunchArgument('server_required', default_value='false'),
 
         # ---------------- 机器人描述 ----------------
         Node(
@@ -88,6 +90,7 @@ def generate_launch_description():
                     "'false' if '", LaunchConfiguration('headless'),
                     "' == 'true' else 'true'"]),
                 'verbose': 'false',
+                'server_required': LaunchConfiguration('server_required'),
             }.items(),
         ),
 
