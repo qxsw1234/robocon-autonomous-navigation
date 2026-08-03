@@ -1,0 +1,128 @@
+# ----------------------------------------------------------------------
+# diy_nav_navigation / rviz/navigation.rviz
+# 导航可视化：Map + 全局/局部 Costmap + Path + LaserScan + ParticleCloud
+#            + TF + RobotModel + Navigation2 面板
+# 固定坐标系：map
+# ----------------------------------------------------------------------
+Panels:
+  - Class: rviz_common/Displays
+    Name: Displays
+  - Class: rviz_common/Views
+    Name: Views
+  - Class: nav2_rviz_plugins/Navigation2
+    Name: Navigation 2
+Visualization Manager:
+  Class: ""
+  Displays:
+    - Class: rviz_default_plugins/Grid
+      Name: Grid
+      Enabled: true
+      Frame: map
+      Plane Cell Count: 40
+      Cell Size: 0.5
+      Color: 160; 160; 164
+      Value: true
+    - Class: rviz_default_plugins/Map
+      Name: Map
+      Enabled: true
+      Topic:
+        Depth: 5
+        Durability Policy: Transient Local
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /map
+      Alpha: 0.6
+      Color Scheme: map
+      Value: true
+    - Class: nav2_rviz_plugins/Costmap2D
+      Name: Global Costmap
+      Enabled: true
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /global_costmap/costmap
+      Color Scheme: costmap
+      Value: true
+    - Class: nav2_rviz_plugins/Costmap2D
+      Name: Local Costmap
+      Enabled: true
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /local_costmap/costmap
+      Color Scheme: costmap
+      Value: true
+    - Class: rviz_default_plugins/Path
+      Name: Global Path
+      Enabled: true
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /plan
+      Color: 0; 255; 0
+      Value: true
+    - Class: rviz_default_plugins/LaserScan
+      Name: LaserScan
+      Enabled: true
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Best Effort
+        Value: /scan
+      Size (m): 0.02
+      Color: 255; 255; 0
+      Value: true
+    - Class: rviz_default_plugins/PoseArray
+      Name: ParticleCloud
+      Enabled: true
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /particlecloud
+      Color: 255; 25; 25
+      Value: true
+    - Class: rviz_default_plugins/TF
+      Name: TF
+      Enabled: true
+      Show Names: true
+      Frame Timeout: 15
+      Marker Scale: 1
+      Value: true
+    - Class: rviz_default_plugins/RobotModel
+      Name: RobotModel
+      Enabled: true
+      Description Source: Topic
+      Description Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /robot_description
+      Visual Enabled: true
+      Collision Enabled: false
+      Value: true
+  Enabled: true
+  Global Options:
+    Background Color: 48; 48; 48
+    Fixed Frame: map
+    Frame Rate: 30
+  Views:
+    Current:
+      Class: rviz_default_plugins/Orbit
+      Distance: 18
+      Focal Point:
+        X: 0
+        Y: 0
+        Z: 0
+      Pitch: 1.57
+      Yaw: 0.0
+      Value: true

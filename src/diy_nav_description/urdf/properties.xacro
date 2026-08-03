@@ -38,9 +38,12 @@
   <!-- ============================================================
        底盘上盖（upper body）
        ============================================================ -->
-  <xacro:property name="upper_length" value="0.38"/>
-  <xacro:property name="upper_width"  value="0.28"/>
-  <!-- 上盖高度 0.02：从 0.08 收薄，配合激光底座使扫描平面精确落到 0.23 m -->
+  <xacro:property name="upper_length" value="0.24"/>
+  <xacro:property name="upper_width"  value="0.20"/>
+  <!-- 上盖高度 0.02：从 0.08 收薄，配合激光底座使扫描平面精确落到 0.23 m
+       长宽 0.24×0.20：边缘距中心 0.10~0.12 m，落入激光盲区（过滤阈值 0.16 m）
+       内——运动俯仰时上盖边缘不再进入扫描平面（阶段 9 排障记录：
+       原 0.38×0.28 上盖边缘 0.14~0.19 m 持续产生自遮挡读数污染地图） -->
   <xacro:property name="upper_height" value="0.02"/>
   <xacro:property name="upper_mass"   value="1.5"/>
 

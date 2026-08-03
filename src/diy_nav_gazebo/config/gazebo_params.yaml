@@ -29,13 +29,14 @@ laser:
   samples: 720                  # 0.5°/sample
   min_angle: -3.141592653589793 # rad（-π）
   max_angle: 3.141592653589793  # rad（+π）
-  min_range: 0.12               # m
+  min_range: 0.12               # m（传感器原始盲区；经 scan_filter 过滤后有效下限 0.15）
   max_range: 8.0                # m
   noise_mean: 0.0
   noise_stddev: 0.01            # m（高斯噪声 σ）
   frame: laser_link
   output_type: sensor_msgs/LaserScan
-  topic: /scan
+  raw_topic: /scan_raw          # 传感器原始输出（含车体自遮挡瞬态）
+  filtered_topic: /scan         # scan_filter 过滤后输出（<0.15 m 置无效）
 
 imu:
   update_rate: 50               # Hz

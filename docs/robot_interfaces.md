@@ -20,7 +20,8 @@
 | Topic | 类型 | 发布节点 | 频率 | 说明 |
 |-------|------|----------|------|------|
 | `/odom` | nav_msgs/msg/Odometry | `/diy_diff_drive` | 30 Hz | 里程计位姿（2D，含协方差） |
-| `/scan` | sensor_msgs/msg/LaserScan | `/diy_laser_plugin` | 10 Hz | 720 点 360° 激光，0.12~8.0 m，σ=0.01 |
+| `/scan` | sensor_msgs/msg/LaserScan | `/scan_filter`（Gazebo 插件出 `/scan_raw`） | 10 Hz | 720 点 360° 激光，0.15~8.0 m，σ=0.01，已滤除车体自遮挡 |
+| `/scan_raw` | sensor_msgs/msg/LaserScan | `/diy_laser_plugin` | 10 Hz | 激光原始输出（含 0.12 m 自遮挡瞬态，一般不用） |
 | `/imu` | sensor_msgs/msg/Imu | `/diy_imu_plugin` | 50 Hz | 三轴角速度/加速度/姿态（底盘中心） |
 | `/joint_states` | sensor_msgs/msg/JointState | `/diy_joint_state` | 30 Hz | 左右驱动轮关节角/角速度 |
 | `/clock` | rosgraph_msgs/msg/Clock | gzserver | 1000 Hz | 仿真时钟（所有节点 use_sim_time） |
@@ -38,8 +39,11 @@
 
 ## 4. 传感器参数摘要（详情见 config/gazebo_params.yaml）
 
-- **激光**：720 samples、−π~+π、10 Hz、量程 0.12~8.0 m、高斯噪声 σ=0.01 m、
-  `frame_id=laser_link`（离地 0.23 m）
+- **激光**：720 samples、−π~+π、10 Hz、量程 0.15~8.0 m（过滤后）、高斯噪声 σ=0.01 m、
+  `frame_id=laser_link`（离地 0.23 m）。**自遮挡抑制**：传感器原始输出 `/scan_raw`
+  中 <0.15 m 的读数（激光平面与上盖顶间隙仅 1.5 cm，俯仰瞬态时车体入平面）由
+  `/scan_filter` 节点置为无效后重发 `/scan`——保证 SLAM 建图、AMCL、代价地图
+  都不受车体自身读数污染。
 - **IMU**：50 Hz、`frame_id=imu_link`（底盘几何中心）、
   `initial_orientation_as_reference=false`（输出绝对姿态）
 - **里程计**：差速模型，轮距 0.36 m、轮径 0.15 m，`odom→base_footprint` 由插件

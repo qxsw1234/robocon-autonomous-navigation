@@ -105,6 +105,16 @@ def generate_launch_description():
             output='screen',
         ),
 
+        # ---------------- 激光过滤（车体自遮挡抑制） ----------------
+        # Gazebo 传感器输出 /scan_raw → 过滤 <0.15 m 读数 → 重发 /scan
+        Node(
+            package='diy_nav_gazebo',
+            executable='scan_filter.py',
+            name='scan_filter',
+            output='screen',
+            parameters=[{'use_sim_time': LaunchConfiguration('use_sim_time')}],
+        ),
+
         # ---------------- 可选 RViz ----------------
         Node(
             package='rviz2',
