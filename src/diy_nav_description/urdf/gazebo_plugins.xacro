@@ -41,6 +41,9 @@
       <ros>
         <remapping>cmd_vel:=cmd_vel</remapping>
       </ros>
+      <!-- 左/右关节声明（REP-103：+y 为左）：left_joint=left_wheel_joint(y=+0.18)
+           插件公式 vl=(v−ω·d/2)/r、vr=(v+ω·d/2)/r：+ω 时左轮减速（内侧）、
+           右轮加速（外侧）→ 逆时针（yaw 增大），与 REP-103 一致。 -->
       <left_joint>left_wheel_joint</left_joint>
       <right_joint>right_wheel_joint</right_joint>
       <wheel_separation>${wheel_separation}</wheel_separation>

@@ -2,9 +2,11 @@
 # ----------------------------------------------------------------------
 # test_motion.sh — 差速驱动运动验收测试（阶段 5）
 # ----------------------------------------------------------------------
-# 前置条件：simulation.launch.py 已启动且机器人已生成（/odom 有数据）。
+# 前置条件：simulation.launch.py 已启动（gzserver 运行中）。
 # 用法：
 #   bash ~/ros2_ws/src/diy_nav_gazebo/scripts/test_motion.sh
+#
+# 脚本会自动重置机器人（删除并重新生成到原点），保证测试起点确定。
 #
 # 测试项（全部从 /odom 读数判定，不依赖目视）：
 #   1. 前进：0.3 m/s × 2 s → 位移 ≈ 0.6 m（容差 ±20%）
@@ -21,6 +23,16 @@ fi
 if ! ros2 pkg prefix diy_nav_gazebo >/dev/null 2>&1; then
   source "${HOME}/ros2_ws/install/setup.bash"
 fi
+
+echo "[INFO] 重置机器人到原点（删除 + 重新生成）..."
+timeout 10 ros2 service call /delete_entity gazebo_msgs/srv/DeleteEntity "{name: 'diy_nav_bot'}" >/dev/null 2>&1 || true
+sleep 1
+if ! ros2 run gazebo_ros spawn_entity.py -topic robot_description -entity diy_nav_bot \
+     -x 0 -y 0 -z 0.1 -Y 0 -timeout 30 2>&1 | grep -q "Successfully spawned"; then
+  echo "[FAIL] 机器人重置失败（仿真是否已启动？）"
+  exit 1
+fi
+sleep 3
 
 echo "[INFO] test_motion.sh 开始（等待 /odom 与 /cmd_vel ...）"
 
