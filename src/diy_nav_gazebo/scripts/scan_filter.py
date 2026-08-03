@@ -19,17 +19,34 @@ import math
 
 import rclpy
 from rclpy.node import Node
+from rclpy.qos import QoSProfile, ReliabilityPolicy
 from sensor_msgs.msg import LaserScan
 
-MIN_VALID_RANGE = 0.16  # 低于此值的读数视为车体自遮挡
+MIN_VALID_RANGE = 0.23  # 低于此值的读数视为车体自遮挡
+# 阈值说明（0.16 → 0.23 升级，根因：车体在激光平面的最大外缘为
+# 底盘前端 0.225 m / 侧面 0.16 m，0.16 阈值只滤掉侧面，前端读数
+# (0.16~0.225 m) 仍被 SLAM 烘焙进地图，在建图停留点留下 0.4×0.4 的
+# "机器人本体"占用块（corridor 内 x≈-5.0 与 x≈4.95 两处，已人工清除）。
+# 0.23 阈值：车体全部读数 (<0.225) 被滤除；真实障碍最近距离——
+# 窄门口 (0.8 m) 门框正面 0.24 m、走廊墙 ≥0.56 m——全部不受影响。
+
+# QoS 关键：Gazebo 传感器与 Nav2（AMCL / costmap 的 ObservationBuffer）
+# 均以 BEST_EFFORT 订阅 /scan。若此处用默认 RELIABLE 发布，DDS 认为二者
+# QoS 不兼容 → AMCL/costmap 收不到任何扫描（表现为定位不更新、导航"失明"
+# 撞墙）。BEST_EFFORT 发布对 RELIABLE 订阅者（slam_toolbox/RViz）仍兼容。
+# 双发布：/scan（BEST_EFFORT → Nav2/AMCL/costmap）+ /scan_slam（RELIABLE
+# → slam_toolbox / cartographer，其订阅若为 RELIABLE 则收不到 BE 数据）。
+SENSOR_QOS = QoSProfile(depth=10, reliability=ReliabilityPolicy.BEST_EFFORT)
+RELIABLE_QOS = QoSProfile(depth=10, reliability=ReliabilityPolicy.RELIABLE)
 
 
 class ScanFilter(Node):
     def __init__(self):
         super().__init__('scan_filter')
-        self.pub = self.create_publisher(LaserScan, '/scan', 10)
+        self.pub = self.create_publisher(LaserScan, '/scan', SENSOR_QOS)
+        self.pub_slam = self.create_publisher(LaserScan, '/scan_slam', RELIABLE_QOS)
         self.sub = self.create_subscription(
-            LaserScan, '/scan_raw', self._cb, 10)
+            LaserScan, '/scan_raw', self._cb, SENSOR_QOS)
 
     def _cb(self, msg):
         ranges = list(msg.ranges)
@@ -39,6 +56,7 @@ class ScanFilter(Node):
         msg.ranges = ranges
         msg.range_min = MIN_VALID_RANGE
         self.pub.publish(msg)
+        self.pub_slam.publish(msg)
 
 
 def main():

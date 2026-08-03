@@ -25,6 +25,7 @@ import time
 import rclpy
 from geometry_msgs.msg import PoseStamped
 from nav2_simple_commander.robot_navigator import BasicNavigator, TaskResult
+from rclpy.qos import QoSProfile, ReliabilityPolicy
 from sensor_msgs.msg import LaserScan
 
 GOALS = [
@@ -38,10 +39,13 @@ GOALS = [
 DEFAULT_OUTPUT = '/home/czm/ros2_ws/results/nav_goals_stage9.csv'
 
 
-def make_pose(frame, x, y, yaw):
+def make_pose(frame, x, y, yaw, clock=None):
     p = PoseStamped()
     p.header.frame_id = frame
-    p.header.stamp = rclpy.clock.Clock().now().to_msg()
+    # 关键：必须用仿真时钟打时间戳（节点 use_sim_time: true）。
+    # 若用墙钟，AMCL 拒绝初始位姿、bt_navigator 因"目标时间戳超出 TF 缓存"
+    # 而无法处理目标（此前 0/5 失败链的一部分）。
+    p.header.stamp = (clock or rclpy.clock.Clock()).now().to_msg()
     p.pose.position.x = x
     p.pose.position.y = y
     p.pose.orientation.z = math.sin(yaw / 2.0)
@@ -50,13 +54,16 @@ def make_pose(frame, x, y, yaw):
 
 
 class ScanMonitor:
-    """订阅 /scan，记录全程最小距离（碰撞近似指标）。"""
+    """订阅 /scan，记录全程最小距离（碰撞近似指标）。
+    注意：必须用 BEST_EFFORT——/scan 由 scan_filter 以传感器 QoS 发布，
+    默认 RELIABLE 订阅会被 DDS 拒绝（QoS 不兼容），收不到任何数据。"""
 
     def __init__(self):
         self.node = rclpy.create_node('scan_monitor')
         self.min_range = 99.0
         self.min_during_goal = 99.0
-        self.node.create_subscription(LaserScan, '/scan', self._cb, 10)
+        q = QoSProfile(depth=10, reliability=ReliabilityPolicy.BEST_EFFORT)
+        self.node.create_subscription(LaserScan, '/scan', self._cb, q)
 
     def _cb(self, msg):
         r = min(msg.ranges)
@@ -80,10 +87,15 @@ def main():
     rclpy.init()
     nav = BasicNavigator()
     monitor = ScanMonitor()
+    # 全部节点跟随仿真时钟（/clock），保证时间戳与 Nav2/AMCL 一致
+    from rclpy.parameter import Parameter
+    nav.set_parameters([Parameter('use_sim_time', value=True)])
+    monitor.node.set_parameters([Parameter('use_sim_time', value=True)])
 
     # ---- 1. 设置初始位姿（规避：无 /initialpose 时 bt_navigator 卡在
     #      "Invalid frame ID map"）----
-    nav.setInitialPose(make_pose('map', args.initial_x, args.initial_y, args.initial_yaw))
+    nav.setInitialPose(make_pose('map', args.initial_x, args.initial_y, args.initial_yaw,
+                                 clock=nav.get_clock()))
     print('[INFO] 初始位姿已发布，等待 Nav2 激活...')
     nav.waitUntilNav2Active()  # 等 lifecycle 全 active + AMCL 定位就绪
     print('[INFO] Nav2 已激活，开始目标序列')
@@ -91,7 +103,7 @@ def main():
     rows = []
     for i, (name, gx, gy) in enumerate(GOALS, 1):
         monitor.start_goal()
-        goal = make_pose('map', gx, gy, 0.0)
+        goal = make_pose('map', gx, gy, 0.0, clock=nav.get_clock())
         print(f'\n[{i}/{len(GOALS)}] {name}: ({gx}, {gy})')
         nav.goToPose(goal)
 

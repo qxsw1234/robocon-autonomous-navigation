@@ -27,7 +27,8 @@ slam_toolbox:
     odom_frame: odom            # 里程计帧（与差速驱动插件一致）
     map_frame: map              # 地图帧（map→odom 由此节点发布）
     base_frame: base_footprint  # 机器人基座帧（与插件 robot_base_frame 一致）
-    scan_topic: /scan           # 激光输入
+    scan_topic: /scan_slam  # scan_filter 双发布：/scan_slam(RELIABLE) 供
+                          # SLAM 使用；/scan(BEST_EFFORT) 供 Nav2 使用           # 激光输入
     use_map_saver: true         # 开启 /map 发布（供 map_saver_cli 保存）
     mode: mapping               # 建图模式（localization 留待后续）
     # 恢复既有地图（与 localization 配合）：
