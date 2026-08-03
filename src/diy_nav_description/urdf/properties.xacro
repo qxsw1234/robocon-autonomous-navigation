@@ -7,7 +7,7 @@
 
   尺寸设计目标：
     - 室内两轮差速移动机器人
-    - 低矮矩形底盘 + 上盖 + 左右驱动轮 + 后方球形万向轮
+    - 低矮矩形底盘 + 上盖 + 左右驱动轮 + 前方球形万向轮
     - 顶部二维激光雷达（安装于圆柱底座）+ 底盘中心 IMU 盒体
 
   坐标约定（ROS REP-103）：
@@ -24,9 +24,9 @@
   <!-- ============================================================
        底盘主体（chassis）
        ============================================================ -->
-  <!-- 主底盘长（x）×宽（y）×高（z） -->
-  <xacro:property name="base_length" value="0.46"/>
-  <xacro:property name="base_width"  value="0.34"/>
+  <!-- 主底盘长（x）×宽（y）×高（z）；0.45×0.32 对齐规格书 -->
+  <xacro:property name="base_length" value="0.45"/>
+  <xacro:property name="base_width"  value="0.32"/>
   <xacro:property name="base_height" value="0.12"/>
   <xacro:property name="base_mass"   value="8.0"/>
 
@@ -40,7 +40,8 @@
        ============================================================ -->
   <xacro:property name="upper_length" value="0.38"/>
   <xacro:property name="upper_width"  value="0.28"/>
-  <xacro:property name="upper_height" value="0.08"/>
+  <!-- 上盖高度 0.02：从 0.08 收薄，配合激光底座使扫描平面精确落到 0.23 m -->
+  <xacro:property name="upper_height" value="0.02"/>
   <xacro:property name="upper_mass"   value="1.5"/>
 
   <!-- ============================================================
@@ -49,28 +50,33 @@
   <xacro:property name="wheel_radius"     value="0.075"/>
   <xacro:property name="wheel_width"      value="0.035"/>
   <xacro:property name="wheel_mass"       value="0.60"/>
-  <!-- 左右轮中心距（沿 y 轴） -->
-  <xacro:property name="wheel_separation" value="0.31"/>
+  <!-- 左右轮中心距（沿 y 轴）= 0.36：轮外缘 y=0.1975 > 底盘半宽 0.16，
+       轮子完整探出底盘侧面，消除埋入底盘的物理隐患 -->
+  <xacro:property name="wheel_separation" value="0.36"/>
   <!-- 轮心沿 x 方向偏移（0 表示位于底盘几何中心正下方） -->
   <xacro:property name="wheel_x_offset"   value="0.0"/>
 
   <!-- ============================================================
-       后万向轮（球体近似）
+       前万向轮（球体近似）
        ============================================================ -->
   <xacro:property name="caster_radius" value="0.035"/>
   <xacro:property name="caster_mass"   value="0.15"/>
-  <!-- caster 相对底盘中心的 x 位置（负值表示后方） -->
-  <xacro:property name="caster_x_offset" value="-0.16"/>
+  <!-- caster 相对底盘中心的 x 位置（正值表示前方，规格书要求 front_caster） -->
+  <xacro:property name="caster_x_offset" value="0.16"/>
 
   <!-- ============================================================
        激光雷达（顶部）
        ============================================================ -->
   <!-- 圆柱底座尺寸 -->
   <xacro:property name="laser_mount_radius" value="0.045"/>
-  <xacro:property name="laser_mount_height" value="0.035"/>
+  <!-- 底座高度 0.01：与收薄的上盖配合，使 laser_link 原点离地精确 = 0.23 m -->
+  <xacro:property name="laser_mount_height" value="0.01"/>
   <xacro:property name="laser_mount_mass"   value="0.20"/>
 
-  <!-- 激光扫描平面（laser_link 原点）相对地面高度目标 ~0.265 m
+  <!-- 激光扫描平面（laser_link 原点）相对地面高度目标 = 0.23 m（规格：约 0.23）
+       0.23 = base_link_z_offset (0.135)
+            + base_height/2 (0.06) + upper_height (0.02)
+            + laser_mount_height (0.01) + laser_link_height/2 (0.005)
        laser_link 位于 laser_mount 顶面上方 -->
   <xacro:property name="laser_link_radius" value="0.030"/>
   <xacro:property name="laser_link_height" value="0.010"/>

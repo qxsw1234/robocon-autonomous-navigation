@@ -46,17 +46,20 @@ map
 └── odom
     └── base_footprint
         └── base_link
+            ├── chassis_link
+            │   └── upper_body_link
             ├── left_wheel_link
             ├── right_wheel_link
-            ├── caster_link
-            ├── laser_link
+            ├── front_caster_link
+            ├── laser_mount_link
+            │   └── laser_link
             └── imu_link
 ```
 
 TF 职责：
 
 - `map -> odom` — SLAM Toolbox / Cartographer / AMCL
-- `odom -> base_footprint` — Gazebo 差速驱动插件
+- `odom -> base_footprint` — Gazebo 差速驱动插件（全项目唯一来源）
 - `base_footprint -> base_link` 及以下 — `robot_state_publisher`
 
 ## 五、构建方法
@@ -87,15 +90,21 @@ ros2 pkg prefix diy_nav_slam_compare
 
 | 阶段 | 状态 |
 |------|------|
-| 阶段 1：环境审计 | ✅ 完成（报告：`~/ros2_project_environment_audit.md`） |
-| 阶段 2：环境配置（Humble + Gazebo11 + Nav2 + SLAM）| ⏳ 未完成 |
-| **阶段 3：工作空间与软件包骨架** | ✅ **本阶段** |
-| 阶段 4：URDF/Xacro 建模 | ⏳ 未开始 |
-| 阶段 5：Gazebo 世界与仿真 | ⏳ 未开始 |
-| 阶段 6：Navigation2 集成 | ⏳ 未开始 |
-| 阶段 7：SLAM Toolbox 建图 | ⏳ 未开始 |
-| 阶段 8：Cartographer 建图 | ⏳ 未开始 |
-| 阶段 9：SLAM 对比与文档 | ⏳ 未开始 |
+| 阶段 1：环境审计 | ✅ 完成（`~/ros2_project_environment_audit.md`） |
+| 阶段 2：环境安装（Humble + Gazebo 11 + Nav2 + SLAM 全栈） | ✅ 完成 |
+| 阶段 3：工作空间骨架（4 包） | ✅ 完成 |
+| 阶段 4：URDF/Xacro 建模 + RViz 展示 | ✅ 完成 |
+| 阶段 4.5：几何对齐规格（0.45×0.32 / 轮距 0.36 / 前 caster / 激光 0.23 m）+ 插件接口空壳 | ✅ **本阶段** |
+| 阶段 5：Gazebo Classic 11 仿真接入 | ⏳ 未开始 |
+| 阶段 6：自建世界（simple / complex） | ⏳ 未开始 |
+| 阶段 7：接口与 TF 验收 | ⏳ 未开始 |
+| 阶段 8：SLAM Toolbox 建图 | ⏳ 未开始 |
+| 阶段 9：AMCL + Navigation2 自主导航 | ⏳ 未开始 |
+| 阶段 10：Nav2 参数调优 | ⏳ 未开始 |
+| 阶段 11：一键 Bringup | ⏳ 未开始 |
+| 阶段 12：Cartographer 建图 | ⏳ 未开始 |
+| 阶段 13：公平对比实验 | ⏳ 未开始 |
+| 阶段 14：最终交付（文档 + 检查清单） | ⏳ 未开始 |
 
 ## 七、目录结构
 

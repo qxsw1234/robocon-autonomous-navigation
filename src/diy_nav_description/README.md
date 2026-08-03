@@ -12,7 +12,7 @@
 一个用于室内 SLAM 与自主导航实验的两轮差速移动机器人：
 
 - 低矮矩形底盘 + 上盖（更好看，允许后期加装其他部件）
-- 左右各一个驱动轮，后方一个球形万向支撑轮
+- 左右各一个驱动轮，前方一个球形万向支撑轮
 - 顶部安装 2D 激光雷达（架于圆柱底座上，便于扫描）
 - 底盘中心安装 IMU 外观盒（后续阶段接入 IMU 传感器插件）
 
@@ -20,17 +20,17 @@
 
 | 部件 | 长/半径 | 宽/长度 | 高/宽度 | 质量 |
 |------|---------|---------|---------|------|
-| 底盘 chassis | 0.46 m | 0.34 m | 0.12 m | 8.0 kg |
-| 上盖 upper_body | 0.38 m | 0.28 m | 0.08 m | 1.5 kg |
+| 底盘 chassis | 0.45 m | 0.32 m | 0.12 m | 8.0 kg |
+| 上盖 upper_body | 0.38 m | 0.28 m | 0.02 m | 1.5 kg |
 | 驱动轮（cyl，轴沿 y） | r=0.075 m | l=0.035 m | — | 0.60 kg（×2） |
-| 后万向轮（球） | r=0.035 m | — | — | 0.15 kg |
-| 激光底座 | r=0.045 m | l=0.035 m | — | 0.20 kg |
+| 前万向轮（球） | r=0.035 m | — | — | 0.15 kg |
+| 激光底座 | r=0.045 m | l=0.01 m | — | 0.20 kg |
 | 激光 laser_link | r=0.030 m | l=0.010 m | — | 0.03 kg |
 | IMU 盒 | 0.05 m | 0.04 m | 0.02 m | 0.05 kg |
 
-- 左右轮心距离 `wheel_separation`：0.31 m
-- 万向轮相对底盘中心的 x 偏移：−0.16 m
-- 激光扫描平面高度（laser_link 中心离地）：≈ 0.265 m
+- 左右轮心距离 `wheel_separation`：0.36 m（轮外缘完全探出底盘侧面，无埋轮）
+- 万向轮相对底盘中心的 x 偏移：+0.16 m（前万向轮）
+- 激光扫描平面高度（laser_link 中心离地）：0.23 m（规格：约 0.23）
 
 **机器人总质量 ≈ 11.13 kg**（8.0 + 1.5 + 2·0.60 + 0.15 + 0.20 + 0.03 + 0.05）。
 
@@ -50,8 +50,9 @@ diy_nav_description/
 │   ├── materials.xacro           ← 视觉颜色（RGBA）
 │   ├── inertial_macros.xacro     ← box/cylinder/sphere 惯性宏
 │   ├── base.xacro                ← base_footprint / base_link / chassis / upper_body
-│   ├── wheels.xacro              ← 左右轮 + 后万向轮
-│   └── sensors.xacro             ← 激光雷达底座 + 激光帧 + IMU
+│   ├── wheels.xacro              ← 左右轮 + 前万向轮
+│   ├── sensors.xacro             ← 激光雷达底座 + 激光帧 + IMU
+│   └── gazebo_plugins.xacro      ← Gazebo 插件接口（阶段 4.5 空壳，阶段 5 填充）
 ├── meshes/                       ← 预留 mesh 资源（当前空）
 ├── rviz/
 │   └── model.rviz                ← Grid + RobotModel + TF + Axes
@@ -65,7 +66,7 @@ diy_nav_description/
 - **materials.xacro** — 6 种颜色（`diy_blue/dark/gray/black/red/lidar`），不使用外部纹理。
 - **inertial_macros.xacro** — `box_inertial`、`cylinder_inertial`、`sphere_inertial` 三个惯性宏，接受 `<origin>` 块，支持旋转的惯性坐标系。
 - **base.xacro** — `base_footprint`（无几何）+ `base_link`（参考帧）+ `chassis_link`（box 主体）+ `upper_body_link`（顶部盒）。
-- **wheels.xacro** — 定义 `diy_wheel` 宏，左右轮按 y 轴对称摆放；圆柱轴通过 `rpy="pi/2 0 0"` 旋转让轴沿 y。后万向轮为球体近似 + fixed joint。
+- **wheels.xacro** — 定义 `diy_wheel` 宏，左右轮按 y 轴对称摆放；圆柱轴通过 `rpy="pi/2 0 0"` 旋转让轴沿 y。前万向轮为球体近似 + fixed joint。
 - **sensors.xacro** — 激光雷达（`laser_mount_link → laser_link`）+ `imu_link`。**本阶段没有 `<gazebo>` 标签，没有传感器插件。**
 
 ## 六、Link 说明
@@ -78,7 +79,7 @@ diy_nav_description/
 | `upper_body_link` | box | 底盘上盖 |
 | `left_wheel_link` | cylinder | 左驱动轮 |
 | `right_wheel_link` | cylinder | 右驱动轮 |
-| `rear_caster_link` | sphere | 后万向轮（球体近似） |
+| `front_caster_link` | sphere | 前万向轮（球体近似） |
 | `laser_mount_link` | cylinder | 激光雷达底座 |
 | `laser_link` | cylinder | 激光扫描参考帧 |
 | `imu_link` | box | IMU 外观盒（底盘中心） |
@@ -92,7 +93,7 @@ diy_nav_description/
 | `chassis_to_upper_body` | fixed | chassis_link → upper_body_link |
 | `left_wheel_joint` | **continuous** | base_link → left_wheel_link（axis 0 1 0） |
 | `right_wheel_joint` | **continuous** | base_link → right_wheel_link（axis 0 1 0） |
-| `rear_caster_joint` | fixed | base_link → rear_caster_link |
+| `front_caster_joint` | fixed | base_link → front_caster_link |
 | `laser_mount_joint` | fixed | base_link → laser_mount_link |
 | `laser_joint` | fixed | laser_mount_link → laser_link |
 | `imu_joint` | fixed | base_link → imu_link |
@@ -106,7 +107,7 @@ base_footprint
     │   └── upper_body_link (fixed)
     ├── left_wheel_link  (continuous, axis y)
     ├── right_wheel_link (continuous, axis y)
-    ├── rear_caster_link (fixed)
+    ├── front_caster_link (fixed)
     ├── laser_mount_link (fixed)
     │   └── laser_link (fixed)
     └── imu_link (fixed)
@@ -191,8 +192,8 @@ ros2 run diy_nav_description validate_description.sh
 - `map` 或 `odom` 坐标帧
 - 静态 TF 冒充上述帧
 
-后万向轮当前使用**球体外观 + fixed joint** 作为简化模型，后续 Gazebo 物理仿真
-阶段会根据接触和摩擦测试重新评估是否需要真实自由度。
+前万向轮当前使用**球体外观 + fixed joint** 作为简化模型（球底精确贴地零悬空），
+后续 Gazebo 物理仿真阶段配置**零摩擦**使其能随车体原地旋转。
 
 ## 十六、下一阶段计划（阶段 5）
 

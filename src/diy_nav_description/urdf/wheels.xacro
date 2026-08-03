@@ -2,7 +2,7 @@
 <!--
   diy_nav_bot / wheels.xacro
   ===========================
-  左右驱动轮（continuous）和后万向轮（球体近似，fixed）。
+  左右驱动轮（continuous）和前万向轮（球体近似，fixed）。
 
   轮子几何设计：
     - <cylinder> 的默认轴向沿 z；为了让轮子转轴沿 y（机器人左右方向），
@@ -19,7 +19,7 @@
     但由于我们让 base_link 位于底盘中心而非底盘底面，最直接的做法是
     让轮子中心沿 z 方向偏移 -(base_height/2) —— 见 origin 设置。
 
-  尺寸：wheel_radius=0.075, wheel_width=0.035, wheel_separation=0.31
+  尺寸：wheel_radius=0.075, wheel_width=0.035, wheel_separation=0.36
 -->
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
@@ -64,10 +64,11 @@
   <xacro:diy_wheel prefix="left"  y_sign="1"/>
   <xacro:diy_wheel prefix="right" y_sign="-1"/>
 
-  <!-- ========== 后万向轮（球体近似，fixed joint） ==========
-       本阶段仅作为静态外观和坐标参考；后续 Gazebo 物理仿真阶段
-       会根据摩擦和接触测试重新评估是否需要真实自由度。 -->
-  <link name="rear_caster_link">
+  <!-- ========== 前万向轮（球体近似，fixed joint） ==========
+       位于底盘前部（caster_x_offset=+0.16，规格书要求 front_caster）。
+       球体与地面接触点 z=0，与轮子底面严格共面、无悬空；
+       Gazebo 物理仿真阶段配置零摩擦使其能随车体原地旋转。 -->
+  <link name="front_caster_link">
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
@@ -89,10 +90,10 @@
   </link>
 
   <!-- caster 球心 z 相对 base_link = -(base_link_z_offset - caster_radius)
-       即让球心离地 = caster_radius。 -->
-  <joint name="rear_caster_joint" type="fixed">
+       即让球心离地 = caster_radius（球底精确贴地，零悬空）。 -->
+  <joint name="front_caster_joint" type="fixed">
     <parent link="base_link"/>
-    <child  link="rear_caster_link"/>
+    <child  link="front_caster_link"/>
     <origin
       xyz="${caster_x_offset} 0 ${-(base_link_z_offset - caster_radius)}"
       rpy="0 0 0"/>

@@ -16,6 +16,12 @@
 #   9. Structural XML checks via Python (uniqueness, parents, single-parent)
 #  10. TF root == base_footprint
 #
+# Stage awareness:  --stage N  (default 4)
+#   N < 5 : Gazebo plugin tokens are forbidden (pure URDF stages)
+#   N >= 5: Gazebo plugin tokens allowed (urdf/gazebo_plugins.xacro implements
+#           the Gazebo plugins from stage 5 on)
+#   slam_toolbox / cartographer tokens are forbidden in every stage.
+#
 # Uses only bash + coreutils + a small Python XML pass. Does NOT rely on
 # `set -e`, so partial failures still print later results. Final exit code
 # is nonzero if any FAIL is recorded.
@@ -28,6 +34,18 @@ MAIN_XACRO_RELPATH="urdf/diy_nav_bot.urdf.xacro"
 # Use full paths for tools that may be shadowed by ZCode wrappers.
 GREP=/usr/bin/grep
 
+# ---------- 阶段参数 ----------
+# --stage N（默认 4）：N>=5 时解锁 Gazebo 插件 token 检查。
+STAGE=4
+if [ "${1:-}" = "--stage" ]; then
+  STAGE="${2:-4}"
+fi
+case "${STAGE}" in
+  ''|*[!0-9]*) echo "[ERROR] --stage 需要非负整数参数（当前: '${STAGE}'）"; exit 2 ;;
+esac
+info()  { printf '[INFO] %s\n'  "$*"; }
+info "Validation stage: ${STAGE}"
+
 REQUIRED_LINKS=(
   base_footprint
   base_link
@@ -35,7 +53,7 @@ REQUIRED_LINKS=(
   upper_body_link
   left_wheel_link
   right_wheel_link
-  rear_caster_link
+  front_caster_link
   laser_mount_link
   laser_link
   imu_link
@@ -47,23 +65,36 @@ REQUIRED_JOINTS=(
   chassis_to_upper_body
   left_wheel_joint
   right_wheel_joint
-  rear_caster_joint
+  front_caster_joint
   laser_mount_joint
   laser_joint
   imu_joint
 )
 
-FORBIDDEN_TOKENS=(
-  # Gazebo plugin filenames (should not appear in a pure URDF stage)
+# 阶段 5 起解锁的 Gazebo 插件 token（随 gazebo_plugins.xacro 填充实现出现）
+GAZEBO_PLUGIN_TOKENS=(
+  # Gazebo plugin filenames
   libgazebo_ros_diff_drive.so
   libgazebo_ros_ray_sensor.so
   libgazebo_ros_imu_sensor.so
   libgazebo_ros_laser.so
   gazebo_ros_diff_drive
+)
+
+# 任何阶段都禁止出现在 description 包中的内容
+ALWAYS_FORBIDDEN_TOKENS=(
   # SLAM / Nav
   slam_toolbox
   cartographer
 )
+
+FORBIDDEN_TOKENS=("${ALWAYS_FORBIDDEN_TOKENS[@]}")
+if [ "${STAGE}" -lt 5 ]; then
+  FORBIDDEN_TOKENS+=("${GAZEBO_PLUGIN_TOKENS[@]}")
+  GAZEBO_NOTE="stage ${STAGE} < 5: gazebo plugin tokens still forbidden"
+else
+  GAZEBO_NOTE="stage ${STAGE} >= 5: gazebo plugin tokens unlocked"
+fi
 
 FAILS=0
 WARNS=0
@@ -169,16 +200,17 @@ if [ -s "${URDF_TMP}" ]; then
     fi
   done
   if [ "${#BAD_HITS[@]}" -eq 0 ]; then
-    pass "No forbidden gazebo/nav/slam tokens present"
+    pass "No forbidden gazebo/nav/slam tokens present (${GAZEBO_NOTE})"
   else
-    fail "Forbidden token(s) found: ${BAD_HITS[*]}"
+    fail "Forbidden token(s) found: ${BAD_HITS[*]} (${GAZEBO_NOTE})"
   fi
 
-  # Precise check: no <link name="map"|"odom"> and no <joint child="map"|"odom">
-  if "${GREP}" -qE '<link[[:space:]]+name="(map|odom)"' "${URDF_TMP}"; then
-    fail 'Forbidden link name "map" or "odom" appears in URDF'
+  # Precise check: no <link name="map"|"odom"> and no <joint name="map"|"odom">
+  if "${GREP}" -qE '<link[[:space:]]+name="(map|odom)"' "${URDF_TMP}" || \
+     "${GREP}" -qE '<joint[[:space:]]+name="(map|odom)"' "${URDF_TMP}"; then
+    fail 'Forbidden frame name "map" or "odom" appears in URDF (link or joint)'
   else
-    pass 'No <link name="map"|"odom"> in URDF'
+    pass 'No <link|joint name="map"|"odom"> in URDF'
   fi
 fi
 

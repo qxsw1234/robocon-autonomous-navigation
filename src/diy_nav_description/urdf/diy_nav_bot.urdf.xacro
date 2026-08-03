@@ -23,4 +23,7 @@
   <xacro:include filename="$(find diy_nav_description)/urdf/wheels.xacro"/>
   <xacro:include filename="$(find diy_nav_description)/urdf/sensors.xacro"/>
 
+  <!-- Gazebo 插件与物理属性（阶段 4.5 为空壳，阶段 5 填充实现） -->
+  <xacro:include filename="$(find diy_nav_description)/urdf/gazebo_plugins.xacro"/>
+
 </robot>

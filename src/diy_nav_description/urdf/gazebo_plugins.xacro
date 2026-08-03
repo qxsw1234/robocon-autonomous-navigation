@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<!--
+  diy_nav_bot / gazebo_plugins.xacro
+  ==================================
+  阶段 4.5：本文件为「空壳 + 接口约定」，仅声明阶段 5 将接入的 Gazebo 插件接口。
+  具体 <gazebo> 标签、插件 XML、摩擦与材质映射在阶段 5 填充（届时本文件随
+  validate_description.sh 的阶段参数解锁校验，stage 参数 >= 5 时放行）。
+
+  阶段 5 接口约定（与 config/gazebo_params.yaml、simulation.launch.py、
+  validate_simulation.sh 保持一致；改动前先同步更新本注释与相关文档）：
+
+  1. 差速驱动插件（左右轮 continuous joint）
+     - 左轮关节 left_wheel_joint / 右轮关节 right_wheel_joint
+     - wheel_separation = 0.36 m，wheel_diameter = 0.15 m
+     - odometry_frame = odom，robot_base_frame = base_footprint
+     - publish_odom = true，publish_odom_tf = true，publish_wheel_tf = false
+       （odom → base_footprint 全项目唯一 TF 来源；车轮 TF 由 robot_state_publisher 发布）
+     - 更新率 30 Hz；含轮距/轮径/速度与加速度上限等可调参数（集中在 YAML）
+
+  2. 关节状态发布插件
+     - 输出 /joint_states，覆盖左右驱动轮（供 RSP 发布 wheel TF）
+
+  3. 2D 激光雷达（<sensor type="ray"> + 对应 ray 传感器插件）
+     - 720 samples，角度范围 -pi ~ +pi，10 Hz
+     - 量程 0.12 ~ 8.0 m，高斯噪声 sigma = 0.01
+     - frame_name = laser_link，输出 sensor_msgs/LaserScan → /scan
+
+  4. IMU（<sensor type="imu"> + 对应 IMU 传感器插件）
+     - 50 Hz，frame_name = imu_link → /imu
+
+  5. 接触摩擦（<gazebo reference>）
+     - 左右轮：mu1 = mu2 = 1.0，kp = 1e6，kd = 100
+     - 前万向轮 front_caster_link：mu1 = mu2 = 0.0（fixed caster 零摩擦才能原地旋转）
+
+  6. 材质映射
+     - materials.xacro 的 6 种 RGBA 颜色 → <gazebo reference> 材质（含透明度）
+
+  7. 全部节点统一 use_sim_time = true；TF 单一来源，不发布静态 map/odom 冒充。
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!-- 阶段 5 在此填充 Gazebo 插件与物理属性 -->
+</robot>
