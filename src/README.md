@@ -96,7 +96,7 @@ ros2 pkg prefix diy_nav_slam_compare
 | 阶段 4：URDF/Xacro 建模 + RViz 展示 | ✅ 完成 |
 | 阶段 4.5：几何对齐规格（0.45×0.32 / 轮距 0.36 / 前 caster / 激光 0.23 m）+ 插件接口空壳 | ✅ 完成 |
 | 阶段 5：Gazebo Classic 11 仿真接入（4 插件 + 空世界 + 运动验收 3/3） | ✅ **本阶段** |
-| 阶段 6：自建世界（simple / complex） | ⏳ 未开始 |
+| 阶段 6：自建世界（simple 10×8 / complex 16×12，纯 SDF 零 Fuel） | ✅ **本阶段** |
 | 阶段 7：接口与 TF 验收 | ⏳ 未开始 |
 | 阶段 8：SLAM Toolbox 建图 | ⏳ 未开始 |
 | 阶段 9：AMCL + Navigation2 自主导航 | ⏳ 未开始 |

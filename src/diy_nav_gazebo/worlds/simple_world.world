@@ -1,0 +1,287 @@
+<?xml version="1.0"?>
+<!--
+  diy_nav_gazebo / worlds/simple_world.world
+  ==========================================
+  阶段 6 简单世界：10×8 m（x∈[-5,5]，y∈[-4,4]）。
+  纯 SDF 基本几何体（box/cylinder），零 Fuel 依赖。
+
+  结构：
+    - 四周外墙（高 1.2 m，墙厚 0.2 m）
+    - 起点区：原点 (0,0) 绿色地面标记（无碰撞）
+    - 中央障碍（1.2×0.9×0.6 m）
+    - 直角弯：V 墙 + H 墙构成 L 形转角走廊
+    - 独立箱体 A / B
+    - 危险区：红色地面标记（无碰撞，录像区分）
+    - 3 个目标区：黄色薄圆柱标记（无碰撞，不挡激光）
+  所有通道宽度 ≥ 1.0 m。
+
+  6 组材质（世界元素，录像区分用）：
+    地面=浅灰  墙=蓝灰  障碍=橙  危险区=红  起点=绿  目标=黄
+
+  推荐初始位姿：x=0 y=0 yaw=0（起点区中心）
+  推荐目标点：G1(3.4,2.8)  G2(-3.6,2.6)  G3(-3.0,-3.2)
+-->
+<sdf version="1.6">
+  <world name="simple_world">
+
+    <light type="directional" name="sun">
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <direction>-0.5 0.1 -0.9</direction>
+    </light>
+
+    <physics type="ode">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1</real_time_factor>
+      <real_time_update_rate>1000</real_time_update_rate>
+    </physics>
+
+    <!-- ================= 地面（浅灰） ================= -->
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <plane><normal>0 0 1</normal><size>20 16</size></plane>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <plane><normal>0 0 1</normal><size>20 16</size></plane>
+          </geometry>
+          <material>
+            <ambient>0.72 0.72 0.72 1</ambient>
+            <diffuse>0.72 0.72 0.72 1</diffuse>
+            <specular>0.01 0.01 0.01 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ================= 四周外墙（蓝灰） ================= -->
+    <model name="wall_north">
+      <static>true</static>
+      <pose>0 4.1 0.6 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>10.4 0.2 1.2</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>10.4 0.2 1.2</size></box></geometry>
+          <material>
+            <ambient>0.42 0.46 0.52 1</ambient>
+            <diffuse>0.42 0.46 0.52 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="wall_south">
+      <static>true</static>
+      <pose>0 -4.1 0.6 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>10.4 0.2 1.2</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>10.4 0.2 1.2</size></box></geometry>
+          <material>
+            <ambient>0.42 0.46 0.52 1</ambient>
+            <diffuse>0.42 0.46 0.52 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="wall_east">
+      <static>true</static>
+      <pose>5.1 0 0.6 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.2 8.4 1.2</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.2 8.4 1.2</size></box></geometry>
+          <material>
+            <ambient>0.42 0.46 0.52 1</ambient>
+            <diffuse>0.42 0.46 0.52 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="wall_west">
+      <static>true</static>
+      <pose>-5.1 0 0.6 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.2 8.4 1.2</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.2 8.4 1.2</size></box></geometry>
+          <material>
+            <ambient>0.42 0.46 0.52 1</ambient>
+            <diffuse>0.42 0.46 0.52 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ================= 起点区（绿，无碰撞） ================= -->
+    <model name="start_area">
+      <static>true</static>
+      <pose>0 0 0.005 0 0 0</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry><box><size>1.6 1.6 0.01</size></box></geometry>
+          <material>
+            <ambient>0.2 0.8 0.2 1</ambient>
+            <diffuse>0.2 0.8 0.2 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ================= 中央障碍（橙） ================= -->
+    <model name="center_obstacle">
+      <static>true</static>
+      <pose>2.2 -0.5 0.3 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>1.2 0.9 0.6</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>1.2 0.9 0.6</size></box></geometry>
+          <material>
+            <ambient>0.9 0.5 0.1 1</ambient>
+            <diffuse>0.9 0.5 0.1 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ================= 直角弯（L 形转角走廊，橙） ================= -->
+    <model name="corner_wall_v">
+      <static>true</static>
+      <pose>-2.4 -0.4 0.5 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.2 3.0 1.0</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.2 3.0 1.0</size></box></geometry>
+          <material>
+            <ambient>0.9 0.5 0.1 1</ambient>
+            <diffuse>0.9 0.5 0.1 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="corner_wall_h">
+      <static>true</static>
+      <pose>-1.0 1.2 0.5 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>2.8 0.2 1.0</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>2.8 0.2 1.0</size></box></geometry>
+          <material>
+            <ambient>0.9 0.5 0.1 1</ambient>
+            <diffuse>0.9 0.5 0.1 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ================= 独立箱体 A / B（橙） ================= -->
+    <model name="box_a">
+      <static>true</static>
+      <pose>1.8 2.0 0.35 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.7 0.7 0.7</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.7 0.7 0.7</size></box></geometry>
+          <material>
+            <ambient>0.9 0.5 0.1 1</ambient>
+            <diffuse>0.9 0.5 0.1 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="box_b">
+      <static>true</static>
+      <pose>-3.4 -2.2 0.3 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.6 0.5 0.6</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.6 0.5 0.6</size></box></geometry>
+          <material>
+            <ambient>0.9 0.5 0.1 1</ambient>
+            <diffuse>0.9 0.5 0.1 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ================= 危险区（红，无碰撞） ================= -->
+    <model name="danger_zone">
+      <static>true</static>
+      <pose>3.2 -2.4 0.005 0 0 0</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry><box><size>2.2 1.2 0.01</size></box></geometry>
+          <material>
+            <ambient>0.85 0.15 0.15 1</ambient>
+            <diffuse>0.85 0.15 0.15 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ================= 目标区 1/2/3（黄，无碰撞薄圆柱） ================= -->
+    <model name="goal_1">
+      <static>true</static>
+      <pose>3.4 2.8 0.01 0 0 0</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry><cylinder><radius>0.18</radius><length>0.02</length></cylinder></geometry>
+          <material>
+            <ambient>0.95 0.9 0.1 1</ambient>
+            <diffuse>0.95 0.9 0.1 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="goal_2">
+      <static>true</static>
+      <pose>-3.6 2.6 0.01 0 0 0</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry><cylinder><radius>0.18</radius><length>0.02</length></cylinder></geometry>
+          <material>
+            <ambient>0.95 0.9 0.1 1</ambient>
+            <diffuse>0.95 0.9 0.1 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="goal_3">
+      <static>true</static>
+      <pose>-3.0 -3.2 0.01 0 0 0</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry><cylinder><radius>0.18</radius><length>0.02</length></cylinder></geometry>
+          <material>
+            <ambient>0.95 0.9 0.1 1</ambient>
+            <diffuse>0.95 0.9 0.1 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+  </world>
+</sdf>

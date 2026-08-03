@@ -1,0 +1,577 @@
+<?xml version="1.0"?>
+<!--
+  diy_nav_gazebo / worlds/complex_world.world
+  ===========================================
+  阶段 6 复杂世界：16×12 m（x∈[-8,8]，y∈[-6,6]）。
+  纯 SDF 基本几何体（box/cylinder），零 Fuel 依赖。
+
+  结构：
+    - 四周外墙（高 1.2 m）
+    - 中央 16 m 长走廊（y∈[-0.75,0.75]）：长直走廊使激光特征高度相似，
+      是对 SLAM 回环检测的刻意考验
+    - 上排房间 R1/R2（被 x=0 分隔墙分开）、下排房间 R3/R4（被 x=2.5 分隔墙分开）
+    - 门口：R1 宽 0.8 m（窄通道考验） / R2 宽 1.2 m / R3、R4 宽 1.0 m
+    - U 形障碍（R2）、L 形障碍（R4）、遮挡大箱体（R3）、多独立箱体
+    - 走廊+房间构成多条回环路线
+    - 危险区：红色地面标记（无碰撞）；起点区：绿色标记（无碰撞）
+    - 6 个目标区：黄色薄圆柱标记（无碰撞，不挡激光）
+
+  6 组材质（世界元素）：地面=浅灰  墙=蓝灰  障碍=橙  危险区=红  起点=绿  目标=黄
+
+  推荐初始位姿：x=0 y=0 yaw=0（起点区，走廊中心）
+  推荐目标点：G1(6.5,4.5)  G2(-6.5,4.5)  G3(-6.5,-4.5)  G4(6.5,-4.5)
+              G5(-7.5,0)   G6(7.5,0)
+-->
+<sdf version="1.6">
+  <world name="complex_world">
+
+    <light type="directional" name="sun">
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>0.8 0.8 0.8 1</diffuse>
+      <specular>0.2 0.2 0.2 1</specular>
+      <direction>-0.5 0.1 -0.9</direction>
+    </light>
+
+    <physics type="ode">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1</real_time_factor>
+      <real_time_update_rate>1000</real_time_update_rate>
+    </physics>
+
+    <!-- ================= 地面（浅灰） ================= -->
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <plane><normal>0 0 1</normal><size>24 20</size></plane>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <plane><normal>0 0 1</normal><size>24 20</size></plane>
+          </geometry>
+          <material>
+            <ambient>0.72 0.72 0.72 1</ambient>
+            <diffuse>0.72 0.72 0.72 1</diffuse>
+            <specular>0.01 0.01 0.01 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ================= 四周外墙（蓝灰） ================= -->
+    <model name="wall_north">
+      <static>true</static>
+      <pose>0 6.1 0.6 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>16.4 0.2 1.2</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>16.4 0.2 1.2</size></box></geometry>
+          <material>
+            <ambient>0.42 0.46 0.52 1</ambient>
+            <diffuse>0.42 0.46 0.52 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="wall_south">
+      <static>true</static>
+      <pose>0 -6.1 0.6 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>16.4 0.2 1.2</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>16.4 0.2 1.2</size></box></geometry>
+          <material>
+            <ambient>0.42 0.46 0.52 1</ambient>
+            <diffuse>0.42 0.46 0.52 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="wall_east">
+      <static>true</static>
+      <pose>8.1 0 0.6 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.2 12.4 1.2</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.2 12.4 1.2</size></box></geometry>
+          <material>
+            <ambient>0.42 0.46 0.52 1</ambient>
+            <diffuse>0.42 0.46 0.52 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="wall_west">
+      <static>true</static>
+      <pose>-8.1 0 0.6 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.2 12.4 1.2</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.2 12.4 1.2</size></box></geometry>
+          <material>
+            <ambient>0.42 0.46 0.52 1</ambient>
+            <diffuse>0.42 0.46 0.52 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ================= 走廊上墙 A（y=0.85，内面 y=0.75，蓝灰）
+         门口：R1 x∈[-2.6,-1.8]（宽 0.8，窄通道）；R2 x∈[1.5,2.7]（宽 1.2） ================= -->
+    <model name="corridor_wall_a1">
+      <static>true</static>
+      <pose>-5.3 0.85 0.5 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>5.4 0.2 1.0</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>5.4 0.2 1.0</size></box></geometry>
+          <material>
+            <ambient>0.42 0.46 0.52 1</ambient>
+            <diffuse>0.42 0.46 0.52 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="corridor_wall_a2">
+      <static>true</static>
+      <pose>-0.15 0.85 0.5 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>3.3 0.2 1.0</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>3.3 0.2 1.0</size></box></geometry>
+          <material>
+            <ambient>0.42 0.46 0.52 1</ambient>
+            <diffuse>0.42 0.46 0.52 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="corridor_wall_a3">
+      <static>true</static>
+      <pose>5.35 0.85 0.5 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>5.3 0.2 1.0</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>5.3 0.2 1.0</size></box></geometry>
+          <material>
+            <ambient>0.42 0.46 0.52 1</ambient>
+            <diffuse>0.42 0.46 0.52 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ================= 走廊下墙 B（y=-0.85，内面 y=-0.75）
+         门口：R3 x∈[-1,0]（宽 1.0）；R4 x∈[3.5,4.5]（宽 1.0） ================= -->
+    <model name="corridor_wall_b1">
+      <static>true</static>
+      <pose>-4.5 -0.85 0.5 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>7.0 0.2 1.0</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>7.0 0.2 1.0</size></box></geometry>
+          <material>
+            <ambient>0.42 0.46 0.52 1</ambient>
+            <diffuse>0.42 0.46 0.52 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="corridor_wall_b2">
+      <static>true</static>
+      <pose>1.75 -0.85 0.5 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>3.5 0.2 1.0</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>3.5 0.2 1.0</size></box></geometry>
+          <material>
+            <ambient>0.42 0.46 0.52 1</ambient>
+            <diffuse>0.42 0.46 0.52 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="corridor_wall_b3">
+      <static>true</static>
+      <pose>6.25 -0.85 0.5 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>3.5 0.2 1.0</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>3.5 0.2 1.0</size></box></geometry>
+          <material>
+            <ambient>0.42 0.46 0.52 1</ambient>
+            <diffuse>0.42 0.46 0.52 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ================= 房间分隔墙（蓝灰） ================= -->
+    <model name="divider_upper">
+      <static>true</static>
+      <pose>0 3.425 0.5 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.2 5.15 1.0</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.2 5.15 1.0</size></box></geometry>
+          <material>
+            <ambient>0.42 0.46 0.52 1</ambient>
+            <diffuse>0.42 0.46 0.52 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="divider_lower">
+      <static>true</static>
+      <pose>2.5 -3.425 0.5 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.2 5.15 1.0</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.2 5.15 1.0</size></box></geometry>
+          <material>
+            <ambient>0.42 0.46 0.52 1</ambient>
+            <diffuse>0.42 0.46 0.52 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ================= U 形障碍（R2，开口朝西，橙） ================= -->
+    <model name="u_obstacle_back">
+      <static>true</static>
+      <pose>5.4 4.2 0.5 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>1.6 0.2 1.0</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>1.6 0.2 1.0</size></box></geometry>
+          <material>
+            <ambient>0.9 0.5 0.1 1</ambient>
+            <diffuse>0.9 0.5 0.1 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="u_obstacle_arm_l">
+      <static>true</static>
+      <pose>4.6 3.7 0.5 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.2 1.0 1.0</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.2 1.0 1.0</size></box></geometry>
+          <material>
+            <ambient>0.9 0.5 0.1 1</ambient>
+            <diffuse>0.9 0.5 0.1 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="u_obstacle_arm_r">
+      <static>true</static>
+      <pose>4.6 4.7 0.5 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.2 1.0 1.0</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.2 1.0 1.0</size></box></geometry>
+          <material>
+            <ambient>0.9 0.5 0.1 1</ambient>
+            <diffuse>0.9 0.5 0.1 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ================= L 形障碍（R4，橙） ================= -->
+    <model name="l_obstacle_v">
+      <static>true</static>
+      <pose>5.2 -3.9 0.5 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.2 2.0 1.0</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.2 2.0 1.0</size></box></geometry>
+          <material>
+            <ambient>0.9 0.5 0.1 1</ambient>
+            <diffuse>0.9 0.5 0.1 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="l_obstacle_h">
+      <static>true</static>
+      <pose>6.3 -4.9 0.5 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>2.2 0.2 1.0</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>2.2 0.2 1.0</size></box></geometry>
+          <material>
+            <ambient>0.9 0.5 0.1 1</ambient>
+            <diffuse>0.9 0.5 0.1 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ================= 遮挡大箱体（R3，橙；其背后形成激光遮挡区） ================= -->
+    <model name="occlusion_box">
+      <static>true</static>
+      <pose>-4.5 -3.5 0.5 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>2.0 1.2 1.0</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>2.0 1.2 1.0</size></box></geometry>
+          <material>
+            <ambient>0.9 0.5 0.1 1</ambient>
+            <diffuse>0.9 0.5 0.1 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ================= 多独立箱体（橙） ================= -->
+    <model name="box_r1_a">
+      <static>true</static>
+      <pose>-5.5 2.5 0.3 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.6 0.6 0.6</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.6 0.6 0.6</size></box></geometry>
+          <material>
+            <ambient>0.9 0.5 0.1 1</ambient>
+            <diffuse>0.9 0.5 0.1 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="box_r1_b">
+      <static>true</static>
+      <pose>-3.5 4.2 0.25 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.5 0.5 0.5</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.5 0.5 0.5</size></box></geometry>
+          <material>
+            <ambient>0.9 0.5 0.1 1</ambient>
+            <diffuse>0.9 0.5 0.1 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="box_r3">
+      <static>true</static>
+      <pose>-1.5 -2.5 0.35 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.7 0.7 0.7</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.7 0.7 0.7</size></box></geometry>
+          <material>
+            <ambient>0.9 0.5 0.1 1</ambient>
+            <diffuse>0.9 0.5 0.1 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="box_r4">
+      <static>true</static>
+      <pose>6.0 -2.5 0.3 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.6 0.6 0.6</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.6 0.6 0.6</size></box></geometry>
+          <material>
+            <ambient>0.9 0.5 0.1 1</ambient>
+            <diffuse>0.9 0.5 0.1 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="box_corridor_e">
+      <static>true</static>
+      <pose>5.0 0.0 0.2 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.4 0.4 0.4</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.4 0.4 0.4</size></box></geometry>
+          <material>
+            <ambient>0.9 0.5 0.1 1</ambient>
+            <diffuse>0.9 0.5 0.1 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="box_corridor_w">
+      <static>true</static>
+      <pose>-5.0 0.0 0.2 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.4 0.4 0.4</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.4 0.4 0.4</size></box></geometry>
+          <material>
+            <ambient>0.9 0.5 0.1 1</ambient>
+            <diffuse>0.9 0.5 0.1 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ================= 危险区（R4，红，无碰撞） ================= -->
+    <model name="danger_zone">
+      <static>true</static>
+      <pose>4.0 -2.5 0.005 0 0 0</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry><box><size>2.0 1.0 0.01</size></box></geometry>
+          <material>
+            <ambient>0.85 0.15 0.15 1</ambient>
+            <diffuse>0.85 0.15 0.15 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ================= 起点区（绿，无碰撞） ================= -->
+    <model name="start_area">
+      <static>true</static>
+      <pose>0 0 0.005 0 0 0</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry><box><size>2.0 2.0 0.01</size></box></geometry>
+          <material>
+            <ambient>0.2 0.8 0.2 1</ambient>
+            <diffuse>0.2 0.8 0.2 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ================= 目标区 G1-G6（黄，无碰撞薄圆柱） ================= -->
+    <model name="goal_1">
+      <static>true</static>
+      <pose>6.5 4.5 0.01 0 0 0</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry><cylinder><radius>0.18</radius><length>0.02</length></cylinder></geometry>
+          <material>
+            <ambient>0.95 0.9 0.1 1</ambient>
+            <diffuse>0.95 0.9 0.1 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="goal_2">
+      <static>true</static>
+      <pose>-6.5 4.5 0.01 0 0 0</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry><cylinder><radius>0.18</radius><length>0.02</length></cylinder></geometry>
+          <material>
+            <ambient>0.95 0.9 0.1 1</ambient>
+            <diffuse>0.95 0.9 0.1 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="goal_3">
+      <static>true</static>
+      <pose>-6.5 -4.5 0.01 0 0 0</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry><cylinder><radius>0.18</radius><length>0.02</length></cylinder></geometry>
+          <material>
+            <ambient>0.95 0.9 0.1 1</ambient>
+            <diffuse>0.95 0.9 0.1 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="goal_4">
+      <static>true</static>
+      <pose>6.5 -4.5 0.01 0 0 0</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry><cylinder><radius>0.18</radius><length>0.02</length></cylinder></geometry>
+          <material>
+            <ambient>0.95 0.9 0.1 1</ambient>
+            <diffuse>0.95 0.9 0.1 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="goal_5">
+      <static>true</static>
+      <pose>-7.5 0 0.01 0 0 0</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry><cylinder><radius>0.18</radius><length>0.02</length></cylinder></geometry>
+          <material>
+            <ambient>0.95 0.9 0.1 1</ambient>
+            <diffuse>0.95 0.9 0.1 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+    <model name="goal_6">
+      <static>true</static>
+      <pose>7.5 0 0.01 0 0 0</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry><cylinder><radius>0.18</radius><length>0.02</length></cylinder></geometry>
+          <material>
+            <ambient>0.95 0.9 0.1 1</ambient>
+            <diffuse>0.95 0.9 0.1 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+  </world>
+</sdf>
