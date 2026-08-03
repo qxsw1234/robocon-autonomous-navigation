@@ -53,16 +53,21 @@
   <!-- 左右轮中心距（沿 y 轴）= 0.36：轮外缘 y=0.1975 > 底盘半宽 0.16，
        轮子完整探出底盘侧面，消除埋入底盘的物理隐患 -->
   <xacro:property name="wheel_separation" value="0.36"/>
-  <!-- 轮心沿 x 方向偏移（0 表示位于底盘几何中心正下方） -->
-  <xacro:property name="wheel_x_offset"   value="0.0"/>
+  <!-- 轮轴沿 x 的偏移 = -0.04（轮线在质心后方 4.2 cm）：
+       质心几乎落在底盘几何中心，若轮线在质心正下方，前 caster 仅承重 ~1%，
+       机器人处于临界稳定——任何扰动都会后翻到底盘后缘着地（实测 19.5° 倾倒）。
+       轮线后移后 caster 承重 ~18%，俯仰稳定容差 ~15°，水平状态才真正稳定。 -->
+  <xacro:property name="wheel_x_offset"   value="-0.04"/>
 
   <!-- ============================================================
        前万向轮（球体近似）
        ============================================================ -->
   <xacro:property name="caster_radius" value="0.035"/>
   <xacro:property name="caster_mass"   value="0.15"/>
-  <!-- caster 相对底盘中心的 x 位置（正值表示前方，规格书要求 front_caster） -->
-  <xacro:property name="caster_x_offset" value="0.16"/>
+  <!-- caster 相对底盘中心的 x 位置（正值表示前方，规格书要求 front_caster）
+       0.19 = 底盘半长 0.225 - caster 半径 0.035：球体前缘与底盘前缘齐平，
+       尽量前移以加大与轮线的距离，分担更多车重 -->
+  <xacro:property name="caster_x_offset" value="0.19"/>
 
   <!-- ============================================================
        激光雷达（顶部）

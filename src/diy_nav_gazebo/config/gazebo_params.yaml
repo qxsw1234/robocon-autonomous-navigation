@@ -1,0 +1,55 @@
+# ----------------------------------------------------------------------
+# gazebo_params.yaml — Gazebo 插件可调参数总表（规格第 19 条：参数集中管理）
+# ----------------------------------------------------------------------
+# 说明：xacro 不支持读取 YAML，插件实际生效值定义在
+#   urdf/gazebo_plugins.xacro 顶部 xacro 属性（与 properties.xacro 联用）。
+# 本文件是这些参数的权威文档 + 各测试脚本的参考，改动参数时两处必须同步。
+
+diff_drive:
+  left_joint: left_wheel_joint
+  right_joint: right_wheel_joint
+  wheel_separation: 0.36        # m，与 properties.xacro 的 wheel_separation 一致
+  wheel_diameter: 0.15          # m = 2 × wheel_radius(0.075)
+  max_wheel_torque: 20.0        # N·m
+  max_wheel_acceleration: 5.0   # rad/s²
+  odometry_frame: odom
+  robot_base_frame: base_footprint
+  publish_odom: true
+  publish_odom_tf: true         # odom → base_footprint 唯一 TF 来源
+  publish_wheel_tf: false       # 车轮 TF 由 robot_state_publisher 发布
+  update_rate: 30               # Hz
+
+joint_state:
+  update_rate: 30               # Hz
+  joints: [left_wheel_joint, right_wheel_joint]
+  topic: /joint_states
+
+laser:
+  update_rate: 10               # Hz
+  samples: 720                  # 0.5°/sample
+  min_angle: -3.141592653589793 # rad（-π）
+  max_angle: 3.141592653589793  # rad（+π）
+  min_range: 0.12               # m
+  max_range: 8.0                # m
+  noise_mean: 0.0
+  noise_stddev: 0.01            # m（高斯噪声 σ）
+  frame: laser_link
+  output_type: sensor_msgs/LaserScan
+  topic: /scan
+
+imu:
+  update_rate: 50               # Hz
+  frame: imu_link
+  topic: /imu
+
+friction:
+  wheels:                       # 左右驱动轮：高摩擦保证驱动力
+    mu1: 1.0
+    mu2: 1.0
+    kp: 1000000.0
+    kd: 100.0
+  front_caster:                 # 前万向轮：零摩擦，fixed caster 才能原地旋转
+    mu1: 0.0
+    mu2: 0.0
+    kp: 1000000.0
+    kd: 100.0

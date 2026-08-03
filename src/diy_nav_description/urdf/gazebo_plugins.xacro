@@ -2,41 +2,182 @@
 <!--
   diy_nav_bot / gazebo_plugins.xacro
   ==================================
-  阶段 4.5：本文件为「空壳 + 接口约定」，仅声明阶段 5 将接入的 Gazebo 插件接口。
-  具体 <gazebo> 标签、插件 XML、摩擦与材质映射在阶段 5 填充（届时本文件随
-  validate_description.sh 的阶段参数解锁校验，stage 参数 >= 5 时放行）。
+  阶段 5：Gazebo Classic 11 插件与物理属性实现。
+  阶段 4.5 曾以空壳形式声明接口，本节内容与之逐项对应：
 
-  阶段 5 接口约定（与 config/gazebo_params.yaml、simulation.launch.py、
-  validate_simulation.sh 保持一致；改动前先同步更新本注释与相关文档）：
+    1. 差速驱动插件（模型级）→ /cmd_vel /odom + odom → base_footprint TF
+    2. 关节状态发布插件     → /joint_states（左右驱动轮）
+    3. 2D 激光雷达          → /scan（720 samples / 10 Hz / 0.12~8.0 m / σ=0.01）
+    4. IMU                  → /imu（50 Hz）
+    5. 接触摩擦：轮 mu=1.0，前万向轮 mu=0（fixed caster 零摩擦才能原地旋转）
+    6. 材质映射：6 种 RGBA 颜色 → Gazebo 内置材质
 
-  1. 差速驱动插件（左右轮 continuous joint）
-     - 左轮关节 left_wheel_joint / 右轮关节 right_wheel_joint
-     - wheel_separation = 0.36 m，wheel_diameter = 0.15 m
-     - odometry_frame = odom，robot_base_frame = base_footprint
-     - publish_odom = true，publish_odom_tf = true，publish_wheel_tf = false
-       （odom → base_footprint 全项目唯一 TF 来源；车轮 TF 由 robot_state_publisher 发布）
-     - 更新率 30 Hz；含轮距/轮径/速度与加速度上限等可调参数（集中在 YAML）
-
-  2. 关节状态发布插件
-     - 输出 /joint_states，覆盖左右驱动轮（供 RSP 发布 wheel TF）
-
-  3. 2D 激光雷达（<sensor type="ray"> + 对应 ray 传感器插件）
-     - 720 samples，角度范围 -pi ~ +pi，10 Hz
-     - 量程 0.12 ~ 8.0 m，高斯噪声 sigma = 0.01
-     - frame_name = laser_link，输出 sensor_msgs/LaserScan → /scan
-
-  4. IMU（<sensor type="imu"> + 对应 IMU 传感器插件）
-     - 50 Hz，frame_name = imu_link → /imu
-
-  5. 接触摩擦（<gazebo reference>）
-     - 左右轮：mu1 = mu2 = 1.0，kp = 1e6，kd = 100
-     - 前万向轮 front_caster_link：mu1 = mu2 = 0.0（fixed caster 零摩擦才能原地旋转）
-
-  6. 材质映射
-     - materials.xacro 的 6 种 RGBA 颜色 → <gazebo reference> 材质（含透明度）
-
-  7. 全部节点统一 use_sim_time = true；TF 单一来源，不发布静态 map/odom 冒充。
+  约定：
+    - odom → base_footprint 全项目唯一 TF 来源（publish_wheel_tf=false，
+      车轮 TF 由 robot_state_publisher 从 /joint_states 发布，不重复）
+    - 全部数值可调参数集中在本文件顶部属性 + config/gazebo_params.yaml（两处同步）
 -->
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-  <!-- 阶段 5 在此填充 Gazebo 插件与物理属性 -->
+
+  <!-- ============================================================
+       可调参数（修改时同步 config/gazebo_params.yaml）
+       ============================================================ -->
+  <xacro:property name="diff_drive_update_rate"   value="30"/>
+  <xacro:property name="max_wheel_torque"         value="20"/>
+  <xacro:property name="max_wheel_acceleration"   value="5.0"/>
+  <xacro:property name="joint_state_update_rate"  value="30"/>
+  <xacro:property name="laser_update_rate"        value="10"/>
+  <xacro:property name="laser_samples"            value="720"/>
+  <xacro:property name="laser_min_range"          value="0.12"/>
+  <xacro:property name="laser_max_range"          value="8.0"/>
+  <xacro:property name="laser_noise_stddev"       value="0.01"/>
+  <xacro:property name="imu_update_rate"          value="50"/>
+
+  <!-- ============================================================
+       1. 差速驱动插件
+       ============================================================ -->
+  <gazebo>
+    <plugin name="diy_diff_drive" filename="libgazebo_ros_diff_drive.so">
+      <ros>
+        <remapping>cmd_vel:=cmd_vel</remapping>
+      </ros>
+      <left_joint>left_wheel_joint</left_joint>
+      <right_joint>right_wheel_joint</right_joint>
+      <wheel_separation>${wheel_separation}</wheel_separation>
+      <wheel_diameter>${2 * wheel_radius}</wheel_diameter>
+      <max_wheel_torque>${max_wheel_torque}</max_wheel_torque>
+      <max_wheel_acceleration>${max_wheel_acceleration}</max_wheel_acceleration>
+      <odometry_frame>odom</odometry_frame>
+      <robot_base_frame>base_footprint</robot_base_frame>
+      <publish_odom>true</publish_odom>
+      <publish_odom_tf>true</publish_odom_tf>
+      <publish_wheel_tf>false</publish_wheel_tf>
+      <update_rate>${diff_drive_update_rate}</update_rate>
+    </plugin>
+  </gazebo>
+
+  <!-- ============================================================
+       2. 关节状态发布插件（仅左右驱动轮，避免固定关节刷屏）
+       ============================================================ -->
+  <gazebo>
+    <plugin name="diy_joint_state" filename="libgazebo_ros_joint_state_publisher.so">
+      <ros>
+        <remapping>~/out:=joint_states</remapping>
+      </ros>
+      <update_rate>${joint_state_update_rate}</update_rate>
+      <joint_name>left_wheel_joint</joint_name>
+      <joint_name>right_wheel_joint</joint_name>
+    </plugin>
+  </gazebo>
+
+  <!-- ============================================================
+       3. 2D 激光雷达（安装在 laser_link，360° 全向扫描）
+       ============================================================ -->
+  <gazebo reference="laser_link">
+    <sensor type="ray" name="diy_laser">
+      <pose>0 0 0 0 0 0</pose>
+      <update_rate>${laser_update_rate}</update_rate>
+      <visualize>false</visualize>
+      <ray>
+        <scan>
+          <horizontal>
+            <samples>${laser_samples}</samples>
+            <resolution>1</resolution>
+            <min_angle>-3.141592653589793</min_angle>
+            <max_angle>3.141592653589793</max_angle>
+          </horizontal>
+        </scan>
+        <range>
+          <min>${laser_min_range}</min>
+          <max>${laser_max_range}</max>
+          <resolution>0.01</resolution>
+        </range>
+        <noise>
+          <type>gaussian</type>
+          <mean>0.0</mean>
+          <stddev>${laser_noise_stddev}</stddev>
+        </noise>
+      </ray>
+      <plugin name="diy_laser_plugin" filename="libgazebo_ros_ray_sensor.so">
+        <ros>
+          <remapping>~/out:=scan</remapping>
+        </ros>
+        <output_type>sensor_msgs/LaserScan</output_type>
+        <frame_name>laser_link</frame_name>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <!-- ============================================================
+       4. IMU（安装在 imu_link，底盘几何中心）
+       ============================================================ -->
+  <gazebo reference="imu_link">
+    <sensor type="imu" name="diy_imu">
+      <pose>0 0 0 0 0 0</pose>
+      <!-- always_on 必须显式置 true（官方示例注明 required），否则不触发更新 -->
+      <always_on>true</always_on>
+      <update_rate>${imu_update_rate}</update_rate>
+      <plugin name="diy_imu_plugin" filename="libgazebo_ros_imu_sensor.so">
+        <ros>
+          <remapping>~/out:=imu</remapping>
+        </ros>
+        <update_rate>${imu_update_rate}</update_rate>
+        <frame_name>imu_link</frame_name>
+        <initial_orientation_as_reference>false</initial_orientation_as_reference>
+      </plugin>
+    </sensor>
+  </gazebo>
+
+  <!-- ============================================================
+       5. 接触摩擦
+       轮子：高摩擦保证驱动；前万向轮：零摩擦（fixed caster 只有零摩擦
+       才能随车体原地旋转，否则车体会被其"别住"）
+       ============================================================ -->
+  <gazebo reference="left_wheel_link">
+    <mu1>1.0</mu1>
+    <mu2>1.0</mu2>
+    <kp>1000000.0</kp>
+    <kd>100.0</kd>
+  </gazebo>
+  <gazebo reference="right_wheel_link">
+    <mu1>1.0</mu1>
+    <mu2>1.0</mu2>
+    <kp>1000000.0</kp>
+    <kd>100.0</kd>
+  </gazebo>
+  <gazebo reference="front_caster_link">
+    <mu1>0.0</mu1>
+    <mu2>0.0</mu2>
+    <kp>1000000.0</kp>
+    <kd>100.0</kd>
+  </gazebo>
+
+  <!-- ============================================================
+       6. 材质映射（materials.xacro 的 6 种 RGBA → Gazebo 内置材质）
+       ============================================================ -->
+  <gazebo reference="chassis_link">
+    <material>Gazebo/Blue</material>
+  </gazebo>
+  <gazebo reference="upper_body_link">
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+  <gazebo reference="left_wheel_link">
+    <material>Gazebo/Black</material>
+  </gazebo>
+  <gazebo reference="right_wheel_link">
+    <material>Gazebo/Black</material>
+  </gazebo>
+  <gazebo reference="front_caster_link">
+    <material>Gazebo/Black</material>
+  </gazebo>
+  <gazebo reference="laser_mount_link">
+    <material>Gazebo/Grey</material>
+  </gazebo>
+  <gazebo reference="laser_link">
+    <material>Gazebo/Orange</material>
+  </gazebo>
+  <gazebo reference="imu_link">
+    <material>Gazebo/Red</material>
+  </gazebo>
+
 </robot>
