@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""navigation_result_logger.py — 导航试验结果汇总（阶段 13）
+"""
+navigation_result_logger.py 导航试验结果汇总（阶段 13）.
 
 把 nav_goal_runner 的 CSV（每轮 5 目标）合并为导航试验总表：
     map_name, run, goal_index, goal_name, success, navigation_time_s,
@@ -20,6 +21,7 @@ from pathlib import Path
 
 
 def read_runs(csv_paths, map_name):
+    """读取并规范化一轮 runner CSV."""
     rows = []
     for run_idx, p in enumerate(csv_paths, 1):
         try:
@@ -44,6 +46,7 @@ def read_runs(csv_paths, map_name):
 
 
 def main():
+    """命令行入口."""
     parser = argparse.ArgumentParser(description='导航试验结果汇总')
     parser.add_argument('--slam-csv', nargs='+', default=[])
     parser.add_argument('--carto-csv', nargs='+', default=[])

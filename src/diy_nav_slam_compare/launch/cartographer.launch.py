@@ -17,7 +17,8 @@
 #   use_sim_time              使用仿真时钟（默认 true）
 #   rviz                      是否启动 RViz（默认 true）
 # ----------------------------------------------------------------------
-import os
+"""Cartographer 2D SLAM launch（与 SLAM Toolbox 互斥）."""
+
 import subprocess
 
 from launch import LaunchDescription
@@ -29,8 +30,12 @@ from launch_ros.substitutions import FindPackageShare
 
 
 def _check_no_slam_toolbox(context):
-    """互斥保护：若 slam_toolbox 正在运行则退出本 launch。
-    用 ps 进程级检测（DDS 发现延迟会让已停止节点残留在图里）。"""
+    """
+    检查 slam_toolbox 是否正在运行.
+
+    若正在运行则抛错退出本 launch（互斥保护）。用 ps 进程级检测，
+    DDS 发现延迟会让已停止节点残留在图里.
+    """
     try:
         out = subprocess.run(
             ['ps', 'aux'], capture_output=True, text=True, timeout=15).stdout
@@ -46,6 +51,7 @@ def _check_no_slam_toolbox(context):
 
 
 def generate_launch_description():
+    """生成 Cartographer launch 描述."""
     pkg_share = FindPackageShare('diy_nav_slam_compare')
     default_config_dir = PathJoinSubstitution([pkg_share, 'config'])
     default_rviz = PathJoinSubstitution([pkg_share, 'rviz', 'cartographer.rviz'])

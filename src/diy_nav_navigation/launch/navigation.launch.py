@@ -12,6 +12,8 @@
 #   rviz              是否启动 RViz（默认 true）
 #   nav2_params_file  Nav2 参数文件（默认包内 config/nav2_params.yaml）
 # ----------------------------------------------------------------------
+"""Nav2 导航栈 launch."""
+
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.conditions import IfCondition
@@ -30,6 +32,7 @@ NAVIGATION_NODES = [
 
 
 def generate_launch_description():
+    """生成 launch 描述."""
     pkg_share = FindPackageShare('diy_nav_navigation')
     default_params = PathJoinSubstitution(
         [pkg_share, 'config', 'nav2_params.yaml'])

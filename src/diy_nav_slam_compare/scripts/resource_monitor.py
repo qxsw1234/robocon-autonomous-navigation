@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""resource_monitor.py — 进程 CPU/内存监控（阶段 13）
+"""
+resource_monitor.py 进程 CPU/内存监控（阶段 13）.
 
 用 psutil 周期性采样指定进程的 CPU 占用与 RSS 内存，输出 CSV：
     timestamp, cpu_percent, rss_mb
@@ -20,6 +21,7 @@ import psutil
 
 
 def main():
+    """命令行入口."""
     parser = argparse.ArgumentParser(description='进程 CPU/内存监控')
     parser.add_argument('--pid', type=int, required=True)
     parser.add_argument('--interval', type=float, default=1.0)

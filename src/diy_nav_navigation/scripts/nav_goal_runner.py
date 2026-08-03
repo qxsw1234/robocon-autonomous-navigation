@@ -16,6 +16,8 @@
 #   python3 ~/ros2_ws/src/diy_nav_navigation/scripts/nav_goal_runner.py \
 #       [--output /path/out.csv] [--initial-x 0 --initial-y 0 --initial-yaw 0]
 # ----------------------------------------------------------------------
+"""nav_goal_runner.py 自主导航目标序列测试."""
+
 import argparse
 import csv
 import math
@@ -40,6 +42,7 @@ DEFAULT_OUTPUT = '/home/czm/ros2_ws/results/nav_goals_stage9.csv'
 
 
 def make_pose(frame, x, y, yaw, clock=None):
+    """构造带时间戳的 PoseStamped."""
     p = PoseStamped()
     p.header.frame_id = frame
     # 关键：必须用仿真时钟打时间戳（节点 use_sim_time: true）。
@@ -54,11 +57,15 @@ def make_pose(frame, x, y, yaw, clock=None):
 
 
 class ScanMonitor:
-    """订阅 /scan，记录全程最小距离（碰撞近似指标）。
+    """
+    记录全程最小距离（碰撞近似指标）.
+
     注意：必须用 BEST_EFFORT——/scan 由 scan_filter 以传感器 QoS 发布，
-    默认 RELIABLE 订阅会被 DDS 拒绝（QoS 不兼容），收不到任何数据。"""
+    默认 RELIABLE 订阅会被 DDS 拒绝（QoS 不兼容），收不到任何数据.
+    """
 
     def __init__(self):
+        """初始化节点与订阅."""
         self.node = rclpy.create_node('scan_monitor')
         self.min_range = 99.0
         self.min_during_goal = 99.0
@@ -73,10 +80,12 @@ class ScanMonitor:
             self.min_during_goal = r
 
     def start_goal(self):
+        """重置本目标的最小距离记录."""
         self.min_during_goal = 99.0
 
 
 def main():
+    """命令行入口."""
     parser = argparse.ArgumentParser()
     parser.add_argument('--output', default=DEFAULT_OUTPUT)
     parser.add_argument('--initial-x', type=float, default=0.0)
@@ -111,7 +120,6 @@ def main():
         plan_time = None
         nav_time = None
         recoveries = 0
-        feedback_log = []
         while not nav.isTaskComplete():
             feedback = nav.getFeedback()
             if feedback is not None:

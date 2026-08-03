@@ -21,6 +21,8 @@
 #   无需在 launch 里硬编码延迟。shorthand → 路径映射与 gui 开关用
 #   PythonExpression 做运行时求值（与 gzserver.launch.py 同款模式）。
 # ----------------------------------------------------------------------
+"""仿真 launch（阶段 5）."""
+
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
@@ -35,7 +37,7 @@ from launch_ros.substitutions import FindPackageShare
 
 
 def _world_path(world_cfg):
-    """把 empty/simple/complex 简写映射为包内世界文件路径，其余按原样透传。"""
+    """把 empty/simple/complex 简写映射为包内世界文件路径，其余按原样透传."""
     share = get_package_share_directory('diy_nav_gazebo')
     return PythonExpression([
         "('", share, "/worlds/empty_world.world') if '", world_cfg, "' == 'empty'",
@@ -46,6 +48,7 @@ def _world_path(world_cfg):
 
 
 def generate_launch_description():
+    """生成仿真 launch 描述."""
     pkg_share = FindPackageShare('diy_nav_gazebo')
 
     return LaunchDescription([
@@ -59,7 +62,7 @@ def generate_launch_description():
         DeclareLaunchArgument('rviz', default_value='true'),
         DeclareLaunchArgument('headless', default_value='false'),
         DeclareLaunchArgument('use_sim_time', default_value='true'),
-        # gzserver 异常退出时是否关闭整个 launch（一键 bringup 的清理机制）
+        # Whether to shut down the whole launch when gzserver exits.
         DeclareLaunchArgument('server_required', default_value='false'),
 
         # ---------------- 机器人描述 ----------------

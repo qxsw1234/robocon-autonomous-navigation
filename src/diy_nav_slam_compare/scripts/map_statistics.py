@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""map_statistics.py — 地图统计指标（阶段 13）
+"""
+map_statistics.py 地图统计指标（阶段 13）.
 
 从 PGM+YAML 计算：
   覆盖率：未知/空闲/占用像素比例
@@ -24,6 +25,7 @@ import yaml
 
 
 def load_pgm(path):
+    """加载 P5 PGM 为灰度数组."""
     data = Path(path).read_bytes()
     lines = data.split(b'\n')
     if lines[0] != b'P5':
@@ -39,6 +41,7 @@ def load_pgm(path):
 
 
 def main():
+    """命令行入口."""
     parser = argparse.ArgumentParser(description='地图统计指标')
     parser.add_argument('--map', required=True, help='PGM 文件路径')
     parser.add_argument('--output', required=True, help='输出 JSON 路径')

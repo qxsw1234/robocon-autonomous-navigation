@@ -1,13 +1,11 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""generate_report.py — 生成 SLAM 对比实验 Markdown 报告（阶段 13）
+"""
+generate_report.py 生成 SLAM 对比实验 Markdown 报告（阶段 13）.
 
 汇总 environment.json / 两算法的 cpu_memory.csv + summary.json +
 navigation_trials.csv，生成 comparison_report.md。
 结论完全由实测数据得出，不预设优劣。
-
-用法：
-    python3 generate_report.py --experiment-dir results/YYYYMMDD_HHMMSS
 """
 import argparse
 import csv
@@ -17,7 +15,7 @@ from pathlib import Path
 
 
 def read_csv_stats(path):
-    """从 cpu_memory.csv 计算平均/峰值 CPU 与 RSS。"""
+    """从 cpu_memory.csv 计算平均/峰值 CPU 与 RSS."""
     cpu, rss = [], []
     with open(path, newline='') as f:
         for row in csv.DictReader(f):
@@ -38,6 +36,7 @@ def read_csv_stats(path):
 
 
 def main():
+    """命令行入口."""
     parser = argparse.ArgumentParser(description='SLAM 对比实验报告生成')
     parser.add_argument('--experiment-dir', required=True)
     args = parser.parse_args()
@@ -65,7 +64,9 @@ def main():
     for algo in ('slam_toolbox', 'cartographer'):
         d = exp / algo
         st = read_csv_stats(d / 'cpu_memory.csv') if (d / 'cpu_memory.csv').exists() else None
-        summary = json.loads((d / 'summary.json').read_text()) if (d / 'summary.json').exists() else {}
+        sum_path = d / 'summary.json'
+        summary = (json.loads(sum_path.read_text()) if sum_path.exists()
+                   else {})
         rows[algo] = {'res': st, 'map': summary}
     for metric in ('cpu_avg', 'cpu_peak', 'rss_avg_mb', 'rss_peak_mb'):
         def fmt(algo):

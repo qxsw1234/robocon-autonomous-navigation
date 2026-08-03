@@ -27,6 +27,8 @@
 #   - RViz：仿真自身 rviz 关闭，由本 launch 按模式透传给 SLAM/Nav2 各自
 #     的 RViz 配置（slam.rviz / navigation.rviz）。
 # ----------------------------------------------------------------------
+"""一键启动 launch（阶段 11）."""
+
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.conditions import IfCondition
@@ -47,6 +49,7 @@ def _include(pkg, launch_file, args, condition):
 
 
 def generate_launch_description():
+    """生成 bringup launch 描述."""
     sim_args = {
         'world': LaunchConfiguration('world'),
         'x': LaunchConfiguration('x'),

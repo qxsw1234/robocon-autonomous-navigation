@@ -14,6 +14,8 @@
 #   rviz              是否启动 RViz（默认 true）
 #   nav2_params_file  Nav2 参数文件（默认包内 config/nav2_params.yaml）
 # ----------------------------------------------------------------------
+"""定位（map_server + AMCL）launch."""
+
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.conditions import IfCondition
@@ -23,6 +25,7 @@ from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description():
+    """生成 launch 描述."""
     pkg_share = FindPackageShare('diy_nav_navigation')
 
     default_map = PathJoinSubstitution(

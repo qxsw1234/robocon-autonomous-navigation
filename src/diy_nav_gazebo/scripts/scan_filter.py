@@ -15,6 +15,8 @@
 #
 # 前置：仿真已启动。用法：由 simulation.launch.py 自动拉起。
 # ----------------------------------------------------------------------
+"""scan_filter.py 激光自遮挡抑制过滤器."""
+
 import math
 
 import rclpy
@@ -43,7 +45,10 @@ RELIABLE_QOS = QoSProfile(depth=10, reliability=ReliabilityPolicy.RELIABLE)
 
 
 class ScanFilter(Node):
+    """过滤车体自遮挡读数并双发布 /scan 与 /scan_slam."""
+
     def __init__(self):
+        """初始化节点、双发布与订阅."""
         super().__init__('scan_filter')
         self.pub = self.create_publisher(LaserScan, '/scan', SENSOR_QOS)
         self.pub_slam = self.create_publisher(LaserScan, '/scan_slam', RELIABLE_QOS)
@@ -62,6 +67,7 @@ class ScanFilter(Node):
 
 
 def main():
+    """命令行入口."""
     rclpy.init()
     node = ScanFilter()
     rclpy.spin(node)

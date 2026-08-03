@@ -11,8 +11,11 @@
 # 用法（先启动仿真 + slam_toolbox）：
 #   python3 ~/ros2_ws/src/diy_nav_navigation/scripts/mapping_tour.py
 # 结束后地图已更新完毕，可保存：
-#   ros2 run nav2_map_server map_saver_cli -f ~/ros2_ws/src/diy_nav_navigation/maps/complex_slam_toolbox
+#   ros2 run nav2_map_server map_saver_cli -f \
+#     ~/ros2_ws/src/diy_nav_navigation/maps/complex_slam_toolbox
 # ----------------------------------------------------------------------
+"""mapping_tour.py 自动建图巡航路线."""
+
 import math
 import sys
 import time
@@ -25,6 +28,7 @@ from nav_msgs.msg import OccupancyGrid
 
 
 def angdiff(a, b):
+    """计算 a-b 的最小有向角度差."""
     return (b - a + math.pi) % (2 * math.pi) - math.pi
 
 
@@ -104,7 +108,10 @@ ROUTE = [
 
 
 class Tour(Node):
+    """建图巡航：按 ROUTE 逐点行驶."""
+
     def __init__(self, need_map=True):
+        """初始化节点与订阅."""
         super().__init__('mapping_tour')
         self.pub = self.create_publisher(Twist, '/cmd_vel', 10)
         self.pose = None
@@ -123,7 +130,7 @@ class Tour(Node):
         self.map_received = True
 
     def _wait_ready(self, timeout=30.0, need_map=True):
-        """等待：/odom 有数据（need_map 时还需 SLAM 已发布 /map）。"""
+        """等待：/odom 有数据（need_map 时还需 SLAM 已发布 /map)."""
         t0 = time.time()
         while time.time() - t0 < timeout:
             rclpy.spin_once(self, timeout_sec=0.1)
@@ -138,6 +145,7 @@ class Tour(Node):
             '超时：/odom 或 /map 无数据（仿真与 slam_toolbox 是否已启动？）')
 
     def go_to_goal(self, tx, ty, slow=False, kp=2.0):
+        """直行到目标点（P 控制），返回是否到达."""
         lin = 0.15 if slow else 0.25
         t0 = time.time()
         while True:
@@ -158,10 +166,12 @@ class Tour(Node):
             rclpy.spin_once(self, timeout_sec=0.05)
 
     def stop(self):
+        """停止机器人."""
         self.pub.publish(Twist())
 
 
 def main():
+    """命令行入口."""
     import argparse
     parser = argparse.ArgumentParser(description='建图巡航路线')
     parser.add_argument('--no-map-check', action='store_true',
