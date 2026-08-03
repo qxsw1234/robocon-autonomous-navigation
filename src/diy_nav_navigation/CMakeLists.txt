@@ -21,6 +21,16 @@ install(
   DESTINATION share/${PROJECT_NAME}/
 )
 
+# 安装脚本目录（可执行辅助脚本），使用 PROGRAMS 保留可执行位
+install(
+  DIRECTORY scripts/
+  DESTINATION lib/${PROJECT_NAME}
+  USE_SOURCE_PERMISSIONS
+  FILES_MATCHING
+    PATTERN "*"
+    PATTERN "*.md" EXCLUDE
+)
+
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   set(ament_cmake_copyright_FOUND TRUE)
