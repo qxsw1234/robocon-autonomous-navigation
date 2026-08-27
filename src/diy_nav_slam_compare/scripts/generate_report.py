@@ -50,8 +50,14 @@ def main():
     env_path = exp / 'environment.json'
     if env_path.exists():
         env = json.loads(env_path.read_text())
+        environment = env.get('environment', {})
+        algorithm_versions = (
+            f"SLAM Toolbox {environment.get('slam_toolbox', '—')}；"
+            f"Cartographer ROS {environment.get('cartographer_ros', '—')}；"
+            f"Nav2 {environment.get('nav2', '—')}"
+        )
         md += ['', '## 实验环境', '',
-               f"- 算法版本: {env.get('algorithms', {})}",
+               f"- 算法版本: {algorithm_versions}",
                f"- 世界: {env.get('world')}",
                f"- bag: {env.get('bag')}",
                f"- 传感器: {env.get('sensors')}"]

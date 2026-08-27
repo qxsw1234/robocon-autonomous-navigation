@@ -4,7 +4,7 @@
 
 ## 实验环境
 
-- 算法版本: {}
+- 算法版本: SLAM Toolbox 2.6.10；Cartographer ROS 2.0.9；Nav2 1.1.20
 - 世界: complex_world.world (16x12 m, 四房间+走廊+窄门口0.8m+U/L障碍+遮挡区)
 - bag: results/bags/mapping_20260803_173441 (582 s, 50/50 航点, 105 MB)
 - 传感器: {'laser': '/scan_slam (RELIABLE 双发布, 720 samples, 10 Hz, 0.30~8.0 m 过滤后)', 'odom': '/odom (差速驱动, 30 Hz)', 'tf': '/tf + /tf_static (同一 bag 回放)'}
@@ -45,7 +45,7 @@
 - 结论：同数据回放下，SLAM Toolbox 计算开销明显低于 Cartographer。
 
 ### 2. 地图精度 —— 各有优劣
-- 门口占用：SLAM Toolbox R1 8%/R2 6%/R3 6%/R4 7%；Cartographer R1 0%/R2 0%/R3 0%/R4 8%
+- 离线回放门口占用：SLAM Toolbox R1 8%/R2 6%/R3 6%/R4 7%；Cartographer R1 0%/R2 0%/R3 0%/R4 8%
   → Cartographer 对窄门口（R1 0.8m）的刻画显著更清晰（0% vs 8%）
 - 走廊噪声：SLAM Toolbox 59 格 vs Cartographer 903 格（约 15 倍差距）
   → SLAM Toolbox 走廊更干净（其噪声为转点处车体角点读数，Cartographer 为弥散散点）

@@ -1,0 +1,18 @@
+build/diy_nav_description/Testing/20260827-1620/Test.xml: 4 tests, 0 errors, 0 failures, 0 skipped
+build/diy_nav_description/test_results/diy_nav_description/flake8.xunit.xml: 1 test, 0 errors, 0 failures, 0 skipped
+build/diy_nav_description/test_results/diy_nav_description/lint_cmake.xunit.xml: 1 test, 0 errors, 0 failures, 0 skipped
+build/diy_nav_description/test_results/diy_nav_description/pep257.xunit.xml: 1 test, 0 errors, 0 failures, 0 skipped
+build/diy_nav_description/test_results/diy_nav_description/xmllint.xunit.xml: 1 test, 0 errors, 0 failures, 0 skipped
+build/diy_nav_gazebo/Testing/20260827-1620/Test.xml: 4 tests, 0 errors, 0 failures, 0 skipped
+build/diy_nav_gazebo/test_results/diy_nav_gazebo/flake8.xunit.xml: 1 test, 0 errors, 0 failures, 0 skipped
+build/diy_nav_gazebo/test_results/diy_nav_gazebo/lint_cmake.xunit.xml: 1 test, 0 errors, 0 failures, 0 skipped
+build/diy_nav_gazebo/test_results/diy_nav_gazebo/pep257.xunit.xml: 2 tests, 0 errors, 0 failures, 0 skipped
+build/diy_nav_gazebo/test_results/diy_nav_gazebo/xmllint.xunit.xml: 1 test, 0 errors, 0 failures, 0 skipped
+build/diy_nav_navigation/Testing/20260827-1620/Test.xml: 4 tests, 0 errors, 0 failures, 0 skipped
+build/diy_nav_navigation/test_results/diy_nav_navigation/flake8.xunit.xml: 1 test, 0 errors, 0 failures, 0 skipped
+build/diy_nav_navigation/test_results/diy_nav_navigation/lint_cmake.xunit.xml: 1 test, 0 errors, 0 failures, 0 skipped
+build/diy_nav_navigation/test_results/diy_nav_navigation/pep257.xunit.xml: 7 tests, 0 errors, 0 failures, 0 skipped
+build/diy_nav_navigation/test_results/diy_nav_navigation/xmllint.xunit.xml: 1 test, 0 errors, 0 failures, 0 skipped
+build/diy_nav_slam_compare/pytest.xml: 3 tests, 0 errors, 0 failures, 1 skipped
+
+Summary: 34 tests, 0 errors, 0 failures, 1 skipped

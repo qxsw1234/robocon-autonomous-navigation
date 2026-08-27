@@ -1,0 +1,10 @@
+Starting >>> diy_nav_description
+Starting >>> diy_nav_navigation
+Starting >>> diy_nav_slam_compare
+Finished <<< diy_nav_navigation [0.23s]
+Finished <<< diy_nav_description [0.25s]
+Starting >>> diy_nav_gazebo
+Finished <<< diy_nav_gazebo [0.07s]
+Finished <<< diy_nav_slam_compare [0.74s]
+
+Summary: 4 packages finished [1.59s]

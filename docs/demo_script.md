@@ -1,6 +1,6 @@
 # 完整答辩演示提纲（demo_script.md）
 
-> 本文件是 8-12 分钟完整讲解的备用提纲，并非最终提交视频的逐段完成清单。最终提交的是约 120 秒的导航实录 `results/videos/demo_navigation_rviz_labeled.mp4`，重点展示地图、机器人、全局路径、LaserScan、粒子云和实际导航过程；完整技术解释由 README 与 `docs/` 文档补充。
+> 本文件是 8-12 分钟完整讲解的备用提纲，并非最终提交视频的逐段完成清单。最终提交的是约 120 秒的导航实录 `results/videos/demo_navigation_rviz.mp4`，内容来自带标注版本，重点展示地图、机器人、全局路径、LaserScan、粒子云和实际导航过程；完整技术解释由 README 与 `docs/` 文档补充。
 
 ## 1. 项目介绍（30 s）
 - **屏幕**：项目标题 + 机器人 CAD 渲染（RViz 模型特写）

@@ -6,18 +6,19 @@
 完成从 URDF 建模、仿真验证、SLAM 建图（SLAM Toolbox / Cartographer 双方案）、
 AMCL 定位到 Navigation2 自主导航的完整闭环，并提供可复现的公平 SLAM 对比实验。
 
-## 环境（如实记录与计划的偏差）
+## 环境（官方要求与早期计划说明）
 
-| 项 | 计划 | 实际环境 | 影响 |
-|----|------|---------|------|
-| 系统 | Ubuntu 24.04 | Ubuntu 22.04.4 | 所有包按 Humble 实装 |
-| ROS 2 | Jazzy | **Humble** | 无 Jazzy 对应包，全部用 Humble 官方源 |
-| Gazebo | Harmonic | **Gazebo Classic 11.10.2** | 世界文件用 SDF 1.x 基本几何体，零 Fuel 依赖 |
-| Nav2 | Jazzy 版 | **1.1.20** | 参数/节点名按 Humble 实装核对 |
+| 项 | 早期自设计划 | 最终实际环境 | 与考核要求的关系 |
+|----|-------------|-------------|------------------|
+| 系统 | Ubuntu 24.04 | Ubuntu 22.04.4 | 与官方题目要求一致 |
+| ROS 2 | Jazzy | **Humble** | 与官方题目要求一致，使用 Humble 官方源 |
+| Gazebo | Harmonic | **Gazebo Classic 11.10.2** | 题目未限定版本；Classic 11 与 Humble 兼容 |
+| Nav2 | Jazzy 版 | **1.1.20** | 按 Humble 版本实装并核对参数/节点名 |
 | SLAM Toolbox | — | **2.6.10** | 官方 online_async 基线 |
 | Cartographer | — | **2.0.9** | 官方 backpack_2d.lua 基线 |
 
-偏差已全程如实记录，未伪造任何 Jazzy/Harmonic 特性。
+24.04 + Jazzy + Harmonic 仅为项目早期自设计划，最终实现按考核要求采用
+Ubuntu 22.04 + ROS 2 Humble；未使用或声称任何 Jazzy/Harmonic 特性。
 
 ## 项目结构
 

@@ -4,8 +4,8 @@
 URDF 建模 → Gazebo 仿真 → 自定义世界 → SLAM（SLAM Toolbox / Cartographer 对比）→
 AMCL 定位 → Navigation2 自主导航 → 一键启动。
 
-> 环境说明：原计划面向 24.04 + Jazzy + Harmonic，本环境为 Humble + Gazebo Classic 11，
-> 全部内容按 Humble/Classic 实装并如实记录（见 `docs/`）。
+> 环境说明：官方题目要求 Ubuntu 22.04 + ROS 2 Humble，本项目与该要求一致；
+> Gazebo 采用与 Humble 兼容的 Classic 11。24.04 + Jazzy + Harmonic 仅是早期自设计划，并非官方要求。
 
 ## 考核完成情况
 

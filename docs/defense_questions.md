@@ -1,18 +1,18 @@
 # 答辩问题准备（defense_questions.md）
 
-> 全部答案基于本项目实测与真实环境，如实回答（含环境偏差）。
+> 全部答案基于本项目实测与真实环境，如实回答（含官方要求与早期计划的区别）。
 
 ## 环境与选型
 
-**Q1. 为什么使用 ROS 2 Humble 而不是计划中的 Jazzy？**
-A：本机环境为 Ubuntu 22.04，Humble 是其官方 ROS 2 发行版；Jazzy 对应 24.04。
-计划原面向 Jazzy+Harmonic，执行中如实改用 Humble 生态（Nav2 1.1.20、
-Gazebo Classic 11），所有差异已在文档记录，未伪造任何 Jazzy 特性。
+**Q1. 为什么使用 ROS 2 Humble，而没有沿用早期自设的 Jazzy 计划？**
+A：官方题目明确要求 Ubuntu 22.04 + ROS 2 Humble，本项目最终环境与题目一致。
+Jazzy 对应 Ubuntu 24.04，只是项目开始前的自设计划，不是考核要求；最终采用
+Humble 生态（Nav2 1.1.20、Gazebo Classic 11），未使用或声称 Jazzy 特性。
 
 **Q2. Gazebo Classic 与 Harmonic 有什么区别？**
 A：Classic 是 ROS 1 时代的经典仿真器（gzserver/gzclient，SDF 1.x），
-Humble 官方支持；Harmonic 是新一代（gz sim，SDF 2.x，新传输层）。
-本环境无 Harmonic 对应依赖，故用 Classic 11，世界文件用 SDF 基本几何体。
+Humble 生态支持；Harmonic 是新一代（gz sim，SDF 2.x，新传输层）。题目只要求
+Gazebo 仿真，没有限定版本，因此采用与 Humble 兼容的 Classic 11，世界文件使用 SDF 基本几何体。
 
 **Q3. URDF 和 SDF 有什么区别？**
 A：URDF 描述单机器人（link/joint/惯性/碰撞），Gazebo 插件需扩展标签；
@@ -166,5 +166,5 @@ A：DDS QoS 兼容性（RELIABLE/BEST_EFFORT 不匹配会让订阅端静默失�
 
 **Q35. 项目的已知局限？**
 A：① 长路线导航成功率受 AMCL 走廊歧义限制（如实记录，非 SLAM 差异）；
-② 过滤阈值 0.30 牺牲 0.30 m 内障碍感知（静态场景可接受）；③ 环境为
-Humble/Classic，与计划 Jazzy/Harmonic 有偏差，已如实记录。
+② 过滤阈值 0.30 牺牲 0.30 m 内障碍感知（静态场景可接受）；③ 项目早期曾自设
+Jazzy/Harmonic 计划，最终按官方要求使用 Humble，并选择兼容的 Gazebo Classic 11。

@@ -1,0 +1,301 @@
+Starting >>> diy_nav_description
+Starting >>> diy_nav_navigation
+Starting >>> diy_nav_slam_compare
+--- output: diy_nav_slam_compare
+============================= test session starts ==============================
+platform linux -- Python 3.10.12, pytest-6.2.5, py-1.10.0, pluggy-0.13.0
+cachedir: /home/czm/ros2_ws/build/diy_nav_slam_compare/.pytest_cache
+rootdir: /home/czm/ros2_ws/src/diy_nav_slam_compare
+plugins: ament-copyright-0.12.15, launch-testing-ros-0.19.13, ament-lint-0.12.15, ament-flake8-0.12.15, ament-pep257-0.12.15, ament-xmllint-0.12.15, launch-testing-1.0.14, colcon-core-0.21.0, cov-3.0.0
+collected 3 items
+
+test/test_copyright.py s                                                 [ 33%]
+test/test_flake8.py .                                                    [ 66%]
+
+=============================== warnings summary ===============================
+test/test_flake8.py::test_flake8
+test/test_flake8.py::test_flake8
+  Warning: SelectableGroups dict interface is deprecated. Use select.
+
+-- Docs: https://docs.pytest.org/en/stable/warnings.html
+test/test_pep257.py .                                                    [100%]
+- generated xml file: /home/czm/ros2_ws/build/diy_nav_slam_compare/pytest.xml --
+=================== 2 passed, 1 skipped, 2 warnings in 0.14s ===================
+---
+--- stderr: diy_nav_slam_compare
+
+=============================== warnings summary ===============================
+test/test_flake8.py::test_flake8
+test/test_flake8.py::test_flake8
+  Warning: SelectableGroups dict interface is deprecated. Use select.
+
+-- Docs: https://docs.pytest.org/en/stable/warnings.html
+---
+Finished <<< diy_nav_slam_compare [0.48s]
+--- output: diy_nav_navigation
+UpdateCTestConfiguration  from :/home/czm/ros2_ws/build/diy_nav_navigation/CTestConfiguration.ini
+Parse Config file:/home/czm/ros2_ws/build/diy_nav_navigation/CTestConfiguration.ini
+   Site: 123
+   Build name: (empty)
+ Add coverage exclude regular expressions.
+Create new tag: 20260827-1620 - Experimental
+UpdateCTestConfiguration  from :/home/czm/ros2_ws/build/diy_nav_navigation/CTestConfiguration.ini
+Parse Config file:/home/czm/ros2_ws/build/diy_nav_navigation/CTestConfiguration.ini
+Test project /home/czm/ros2_ws/build/diy_nav_navigation
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 1
+    Start 1: flake8
+
+1: Test command: /usr/bin/python3 "-u" "/opt/ros/humble/share/ament_cmake_test/cmake/run_test.py" "/home/czm/ros2_ws/build/diy_nav_navigation/test_results/diy_nav_navigation/flake8.xunit.xml" "--package-name" "diy_nav_navigation" "--output-file" "/home/czm/ros2_ws/build/diy_nav_navigation/ament_flake8/flake8.txt" "--command" "/opt/ros/humble/bin/ament_flake8" "--xunit-file" "/home/czm/ros2_ws/build/diy_nav_navigation/test_results/diy_nav_navigation/flake8.xunit.xml"
+1: Test timeout computed to be: 60
+1: -- run_test.py: invoking following command in '/home/czm/ros2_ws/src/diy_nav_navigation':
+1:  - /opt/ros/humble/bin/ament_flake8 --xunit-file /home/czm/ros2_ws/build/diy_nav_navigation/test_results/diy_nav_navigation/flake8.xunit.xml
+1: 
+1: 7 files checked
+1: No problems found
+1: 
+1: Checked files:
+1: 
+1: * ./launch/bringup.launch.py
+1: * ./launch/slam_toolbox.launch.py
+1: * ./launch/localization.launch.py
+1: * ./launch/navigation.launch.py
+1: * ./scripts/mapping_tour.py
+1: * ./scripts/save_map.py
+1: * ./scripts/nav_goal_runner.py
+1: -- run_test.py: return code 0
+1: -- run_test.py: verify result file '/home/czm/ros2_ws/build/diy_nav_navigation/test_results/diy_nav_navigation/flake8.xunit.xml'
+1/4 Test #1: flake8 ...........................   Passed    0.17 sec
+test 2
+    Start 2: lint_cmake
+
+2: Test command: /usr/bin/python3 "-u" "/opt/ros/humble/share/ament_cmake_test/cmake/run_test.py" "/home/czm/ros2_ws/build/diy_nav_navigation/test_results/diy_nav_navigation/lint_cmake.xunit.xml" "--package-name" "diy_nav_navigation" "--output-file" "/home/czm/ros2_ws/build/diy_nav_navigation/ament_lint_cmake/lint_cmake.txt" "--command" "/opt/ros/humble/bin/ament_lint_cmake" "--xunit-file" "/home/czm/ros2_ws/build/diy_nav_navigation/test_results/diy_nav_navigation/lint_cmake.xunit.xml"
+2: Test timeout computed to be: 60
+2: -- run_test.py: invoking following command in '/home/czm/ros2_ws/src/diy_nav_navigation':
+2:  - /opt/ros/humble/bin/ament_lint_cmake --xunit-file /home/czm/ros2_ws/build/diy_nav_navigation/test_results/diy_nav_navigation/lint_cmake.xunit.xml
+2: 
+2: No problems found
+2: -- run_test.py: return code 0
+2: -- run_test.py: verify result file '/home/czm/ros2_ws/build/diy_nav_navigation/test_results/diy_nav_navigation/lint_cmake.xunit.xml'
+2/4 Test #2: lint_cmake .......................   Passed    0.07 sec
+test 3
+    Start 3: pep257
+
+3: Test command: /usr/bin/python3 "-u" "/opt/ros/humble/share/ament_cmake_test/cmake/run_test.py" "/home/czm/ros2_ws/build/diy_nav_navigation/test_results/diy_nav_navigation/pep257.xunit.xml" "--package-name" "diy_nav_navigation" "--output-file" "/home/czm/ros2_ws/build/diy_nav_navigation/ament_pep257/pep257.txt" "--command" "/opt/ros/humble/bin/ament_pep257" "--xunit-file" "/home/czm/ros2_ws/build/diy_nav_navigation/test_results/diy_nav_navigation/pep257.xunit.xml"
+3: Test timeout computed to be: 60
+3: -- run_test.py: invoking following command in '/home/czm/ros2_ws/src/diy_nav_navigation':
+3:  - /opt/ros/humble/bin/ament_pep257 --xunit-file /home/czm/ros2_ws/build/diy_nav_navigation/test_results/diy_nav_navigation/pep257.xunit.xml
+3: checking ./launch/bringup.launch.py
+3: checking ./launch/localization.launch.py
+3: checking ./launch/navigation.launch.py
+3: checking ./launch/slam_toolbox.launch.py
+3: checking ./scripts/mapping_tour.py
+3: checking ./scripts/nav_goal_runner.py
+3: checking ./scripts/save_map.py
+3: No problems found
+3: -- run_test.py: return code 0
+3: -- run_test.py: verify result file '/home/czm/ros2_ws/build/diy_nav_navigation/test_results/diy_nav_navigation/pep257.xunit.xml'
+3/4 Test #3: pep257 ...........................   Passed    0.12 sec
+test 4
+    Start 4: xmllint
+
+4: Test command: /usr/bin/python3 "-u" "/opt/ros/humble/share/ament_cmake_test/cmake/run_test.py" "/home/czm/ros2_ws/build/diy_nav_navigation/test_results/diy_nav_navigation/xmllint.xunit.xml" "--package-name" "diy_nav_navigation" "--output-file" "/home/czm/ros2_ws/build/diy_nav_navigation/ament_xmllint/xmllint.txt" "--command" "/opt/ros/humble/bin/ament_xmllint" "--xunit-file" "/home/czm/ros2_ws/build/diy_nav_navigation/test_results/diy_nav_navigation/xmllint.xunit.xml"
+4: Test timeout computed to be: 60
+4: -- run_test.py: invoking following command in '/home/czm/ros2_ws/src/diy_nav_navigation':
+4:  - /opt/ros/humble/bin/ament_xmllint --xunit-file /home/czm/ros2_ws/build/diy_nav_navigation/test_results/diy_nav_navigation/xmllint.xunit.xml
+4: File 'package.xml' is valid
+4: 
+4: No problems found
+4: -- run_test.py: return code 0
+4: -- run_test.py: verify result file '/home/czm/ros2_ws/build/diy_nav_navigation/test_results/diy_nav_navigation/xmllint.xunit.xml'
+4/4 Test #4: xmllint ..........................   Passed    1.16 sec
+
+100% tests passed, 0 tests failed out of 4
+
+Label Time Summary:
+flake8        =   0.17 sec*proc (1 test)
+lint_cmake    =   0.07 sec*proc (1 test)
+linter        =   1.52 sec*proc (4 tests)
+pep257        =   0.12 sec*proc (1 test)
+xmllint       =   1.16 sec*proc (1 test)
+
+Total Test time (real) =   1.52 sec
+---
+Finished <<< diy_nav_navigation [1.65s]
+--- output: diy_nav_description
+UpdateCTestConfiguration  from :/home/czm/ros2_ws/build/diy_nav_description/CTestConfiguration.ini
+Parse Config file:/home/czm/ros2_ws/build/diy_nav_description/CTestConfiguration.ini
+   Site: 123
+   Build name: (empty)
+ Add coverage exclude regular expressions.
+Create new tag: 20260827-1620 - Experimental
+UpdateCTestConfiguration  from :/home/czm/ros2_ws/build/diy_nav_description/CTestConfiguration.ini
+Parse Config file:/home/czm/ros2_ws/build/diy_nav_description/CTestConfiguration.ini
+Test project /home/czm/ros2_ws/build/diy_nav_description
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 1
+    Start 1: flake8
+
+1: Test command: /usr/bin/python3 "-u" "/opt/ros/humble/share/ament_cmake_test/cmake/run_test.py" "/home/czm/ros2_ws/build/diy_nav_description/test_results/diy_nav_description/flake8.xunit.xml" "--package-name" "diy_nav_description" "--output-file" "/home/czm/ros2_ws/build/diy_nav_description/ament_flake8/flake8.txt" "--command" "/opt/ros/humble/bin/ament_flake8" "--xunit-file" "/home/czm/ros2_ws/build/diy_nav_description/test_results/diy_nav_description/flake8.xunit.xml"
+1: Test timeout computed to be: 60
+1: -- run_test.py: invoking following command in '/home/czm/ros2_ws/src/diy_nav_description':
+1:  - /opt/ros/humble/bin/ament_flake8 --xunit-file /home/czm/ros2_ws/build/diy_nav_description/test_results/diy_nav_description/flake8.xunit.xml
+1: 
+1: 1 files checked
+1: No problems found
+1: 
+1: Checked files:
+1: 
+1: * ./launch/display.launch.py
+1: -- run_test.py: return code 0
+1: -- run_test.py: verify result file '/home/czm/ros2_ws/build/diy_nav_description/test_results/diy_nav_description/flake8.xunit.xml'
+1/4 Test #1: flake8 ...........................   Passed    0.13 sec
+test 2
+    Start 2: lint_cmake
+
+2: Test command: /usr/bin/python3 "-u" "/opt/ros/humble/share/ament_cmake_test/cmake/run_test.py" "/home/czm/ros2_ws/build/diy_nav_description/test_results/diy_nav_description/lint_cmake.xunit.xml" "--package-name" "diy_nav_description" "--output-file" "/home/czm/ros2_ws/build/diy_nav_description/ament_lint_cmake/lint_cmake.txt" "--command" "/opt/ros/humble/bin/ament_lint_cmake" "--xunit-file" "/home/czm/ros2_ws/build/diy_nav_description/test_results/diy_nav_description/lint_cmake.xunit.xml"
+2: Test timeout computed to be: 60
+2: -- run_test.py: invoking following command in '/home/czm/ros2_ws/src/diy_nav_description':
+2:  - /opt/ros/humble/bin/ament_lint_cmake --xunit-file /home/czm/ros2_ws/build/diy_nav_description/test_results/diy_nav_description/lint_cmake.xunit.xml
+2: 
+2: No problems found
+2: -- run_test.py: return code 0
+2: -- run_test.py: verify result file '/home/czm/ros2_ws/build/diy_nav_description/test_results/diy_nav_description/lint_cmake.xunit.xml'
+2/4 Test #2: lint_cmake .......................   Passed    0.07 sec
+test 3
+    Start 3: pep257
+
+3: Test command: /usr/bin/python3 "-u" "/opt/ros/humble/share/ament_cmake_test/cmake/run_test.py" "/home/czm/ros2_ws/build/diy_nav_description/test_results/diy_nav_description/pep257.xunit.xml" "--package-name" "diy_nav_description" "--output-file" "/home/czm/ros2_ws/build/diy_nav_description/ament_pep257/pep257.txt" "--command" "/opt/ros/humble/bin/ament_pep257" "--xunit-file" "/home/czm/ros2_ws/build/diy_nav_description/test_results/diy_nav_description/pep257.xunit.xml"
+3: Test timeout computed to be: 60
+3: -- run_test.py: invoking following command in '/home/czm/ros2_ws/src/diy_nav_description':
+3:  - /opt/ros/humble/bin/ament_pep257 --xunit-file /home/czm/ros2_ws/build/diy_nav_description/test_results/diy_nav_description/pep257.xunit.xml
+3: checking ./launch/display.launch.py
+3: No problems found
+3: -- run_test.py: return code 0
+3: -- run_test.py: verify result file '/home/czm/ros2_ws/build/diy_nav_description/test_results/diy_nav_description/pep257.xunit.xml'
+3/4 Test #3: pep257 ...........................   Passed    0.11 sec
+test 4
+    Start 4: xmllint
+
+4: Test command: /usr/bin/python3 "-u" "/opt/ros/humble/share/ament_cmake_test/cmake/run_test.py" "/home/czm/ros2_ws/build/diy_nav_description/test_results/diy_nav_description/xmllint.xunit.xml" "--package-name" "diy_nav_description" "--output-file" "/home/czm/ros2_ws/build/diy_nav_description/ament_xmllint/xmllint.txt" "--command" "/opt/ros/humble/bin/ament_xmllint" "--xunit-file" "/home/czm/ros2_ws/build/diy_nav_description/test_results/diy_nav_description/xmllint.xunit.xml"
+4: Test timeout computed to be: 60
+4: -- run_test.py: invoking following command in '/home/czm/ros2_ws/src/diy_nav_description':
+4:  - /opt/ros/humble/bin/ament_xmllint --xunit-file /home/czm/ros2_ws/build/diy_nav_description/test_results/diy_nav_description/xmllint.xunit.xml
+4: File 'package.xml' is valid
+4: 
+4: No problems found
+4: -- run_test.py: return code 0
+4: -- run_test.py: verify result file '/home/czm/ros2_ws/build/diy_nav_description/test_results/diy_nav_description/xmllint.xunit.xml'
+4/4 Test #4: xmllint ..........................   Passed    1.25 sec
+
+100% tests passed, 0 tests failed out of 4
+
+Label Time Summary:
+flake8        =   0.13 sec*proc (1 test)
+lint_cmake    =   0.07 sec*proc (1 test)
+linter        =   1.56 sec*proc (4 tests)
+pep257        =   0.11 sec*proc (1 test)
+xmllint       =   1.25 sec*proc (1 test)
+
+Total Test time (real) =   1.56 sec
+---
+Finished <<< diy_nav_description [1.69s]
+Starting >>> diy_nav_gazebo
+--- output: diy_nav_gazebo
+UpdateCTestConfiguration  from :/home/czm/ros2_ws/build/diy_nav_gazebo/CTestConfiguration.ini
+Parse Config file:/home/czm/ros2_ws/build/diy_nav_gazebo/CTestConfiguration.ini
+   Site: 123
+   Build name: (empty)
+ Add coverage exclude regular expressions.
+Create new tag: 20260827-1620 - Experimental
+UpdateCTestConfiguration  from :/home/czm/ros2_ws/build/diy_nav_gazebo/CTestConfiguration.ini
+Parse Config file:/home/czm/ros2_ws/build/diy_nav_gazebo/CTestConfiguration.ini
+Test project /home/czm/ros2_ws/build/diy_nav_gazebo
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 1
+    Start 1: flake8
+
+1: Test command: /usr/bin/python3 "-u" "/opt/ros/humble/share/ament_cmake_test/cmake/run_test.py" "/home/czm/ros2_ws/build/diy_nav_gazebo/test_results/diy_nav_gazebo/flake8.xunit.xml" "--package-name" "diy_nav_gazebo" "--output-file" "/home/czm/ros2_ws/build/diy_nav_gazebo/ament_flake8/flake8.txt" "--command" "/opt/ros/humble/bin/ament_flake8" "--xunit-file" "/home/czm/ros2_ws/build/diy_nav_gazebo/test_results/diy_nav_gazebo/flake8.xunit.xml"
+1: Test timeout computed to be: 60
+1: -- run_test.py: invoking following command in '/home/czm/ros2_ws/src/diy_nav_gazebo':
+1:  - /opt/ros/humble/bin/ament_flake8 --xunit-file /home/czm/ros2_ws/build/diy_nav_gazebo/test_results/diy_nav_gazebo/flake8.xunit.xml
+1: 
+1: 2 files checked
+1: No problems found
+1: 
+1: Checked files:
+1: 
+1: * ./launch/simulation.launch.py
+1: * ./scripts/scan_filter.py
+1: -- run_test.py: return code 0
+1: -- run_test.py: verify result file '/home/czm/ros2_ws/build/diy_nav_gazebo/test_results/diy_nav_gazebo/flake8.xunit.xml'
+1/4 Test #1: flake8 ...........................   Passed    0.15 sec
+test 2
+    Start 2: lint_cmake
+
+2: Test command: /usr/bin/python3 "-u" "/opt/ros/humble/share/ament_cmake_test/cmake/run_test.py" "/home/czm/ros2_ws/build/diy_nav_gazebo/test_results/diy_nav_gazebo/lint_cmake.xunit.xml" "--package-name" "diy_nav_gazebo" "--output-file" "/home/czm/ros2_ws/build/diy_nav_gazebo/ament_lint_cmake/lint_cmake.txt" "--command" "/opt/ros/humble/bin/ament_lint_cmake" "--xunit-file" "/home/czm/ros2_ws/build/diy_nav_gazebo/test_results/diy_nav_gazebo/lint_cmake.xunit.xml"
+2: Test timeout computed to be: 60
+2: -- run_test.py: invoking following command in '/home/czm/ros2_ws/src/diy_nav_gazebo':
+2:  - /opt/ros/humble/bin/ament_lint_cmake --xunit-file /home/czm/ros2_ws/build/diy_nav_gazebo/test_results/diy_nav_gazebo/lint_cmake.xunit.xml
+2: 
+2: No problems found
+2: -- run_test.py: return code 0
+2: -- run_test.py: verify result file '/home/czm/ros2_ws/build/diy_nav_gazebo/test_results/diy_nav_gazebo/lint_cmake.xunit.xml'
+2/4 Test #2: lint_cmake .......................   Passed    0.07 sec
+test 3
+    Start 3: pep257
+
+3: Test command: /usr/bin/python3 "-u" "/opt/ros/humble/share/ament_cmake_test/cmake/run_test.py" "/home/czm/ros2_ws/build/diy_nav_gazebo/test_results/diy_nav_gazebo/pep257.xunit.xml" "--package-name" "diy_nav_gazebo" "--output-file" "/home/czm/ros2_ws/build/diy_nav_gazebo/ament_pep257/pep257.txt" "--command" "/opt/ros/humble/bin/ament_pep257" "--xunit-file" "/home/czm/ros2_ws/build/diy_nav_gazebo/test_results/diy_nav_gazebo/pep257.xunit.xml"
+3: Test timeout computed to be: 60
+3: -- run_test.py: invoking following command in '/home/czm/ros2_ws/src/diy_nav_gazebo':
+3:  - /opt/ros/humble/bin/ament_pep257 --xunit-file /home/czm/ros2_ws/build/diy_nav_gazebo/test_results/diy_nav_gazebo/pep257.xunit.xml
+3: checking ./launch/simulation.launch.py
+3: checking ./scripts/scan_filter.py
+3: No problems found
+3: -- run_test.py: return code 0
+3: -- run_test.py: verify result file '/home/czm/ros2_ws/build/diy_nav_gazebo/test_results/diy_nav_gazebo/pep257.xunit.xml'
+3/4 Test #3: pep257 ...........................   Passed    0.10 sec
+test 4
+    Start 4: xmllint
+
+4: Test command: /usr/bin/python3 "-u" "/opt/ros/humble/share/ament_cmake_test/cmake/run_test.py" "/home/czm/ros2_ws/build/diy_nav_gazebo/test_results/diy_nav_gazebo/xmllint.xunit.xml" "--package-name" "diy_nav_gazebo" "--output-file" "/home/czm/ros2_ws/build/diy_nav_gazebo/ament_xmllint/xmllint.txt" "--command" "/opt/ros/humble/bin/ament_xmllint" "--xunit-file" "/home/czm/ros2_ws/build/diy_nav_gazebo/test_results/diy_nav_gazebo/xmllint.xunit.xml"
+4: Test timeout computed to be: 60
+4: -- run_test.py: invoking following command in '/home/czm/ros2_ws/src/diy_nav_gazebo':
+4:  - /opt/ros/humble/bin/ament_xmllint --xunit-file /home/czm/ros2_ws/build/diy_nav_gazebo/test_results/diy_nav_gazebo/xmllint.xunit.xml
+4: File 'package.xml' is valid
+4: 
+4: No problems found
+4: -- run_test.py: return code 0
+4: -- run_test.py: verify result file '/home/czm/ros2_ws/build/diy_nav_gazebo/test_results/diy_nav_gazebo/xmllint.xunit.xml'
+4/4 Test #4: xmllint ..........................   Passed    0.65 sec
+
+100% tests passed, 0 tests failed out of 4
+
+Label Time Summary:
+flake8        =   0.15 sec*proc (1 test)
+lint_cmake    =   0.07 sec*proc (1 test)
+linter        =   0.96 sec*proc (4 tests)
+pep257        =   0.10 sec*proc (1 test)
+xmllint       =   0.65 sec*proc (1 test)
+
+Total Test time (real) =   0.96 sec
+---
+Finished <<< diy_nav_gazebo [0.98s]
+
+Summary: 4 packages finished [2.82s]
+  1 package had stderr output: diy_nav_slam_compare
