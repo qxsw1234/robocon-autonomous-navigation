@@ -35,3 +35,6 @@ src/diy_nav_slam_compare/results/raw/
 log_colcon_build.txt
 log_rosdep_check.txt
 log_*.txt
+
+# 录屏原片保留在本机；公开仓库只提交带标题的最终版本
+results/videos/demo_navigation_rviz.mp4

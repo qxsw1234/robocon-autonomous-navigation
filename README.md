@@ -7,6 +7,17 @@ AMCL 定位 → Navigation2 自主导航 → 一键启动。
 > 环境说明：原计划面向 24.04 + Jazzy + Harmonic，本环境为 Humble + Gazebo Classic 11，
 > 全部内容按 Humble/Classic 实装并如实记录（见 `docs/`）。
 
+## 考核完成情况
+
+- **2.1 普通题**：DIY URDF/Xacro 机器人、自建 Gazebo 世界、SLAM Toolbox、AMCL、Navigation2 和自主导航闭环均已完成。
+- **2.2 拓展题**：已部署 Cartographer，并使用同一个 rosbag 与 SLAM Toolbox 做 8 项指标和 30 次导航试验对比。
+- **演示视频**：`results/videos/demo_navigation_rviz.mp4`，包含地图、机器人、全局路径、LaserScan、粒子云及实际自主导航过程；录制中第一个 7.5 m 走廊目标成功到达。
+- **已知限制**：复杂长路线受 AMCL 走廊歧义影响，整体成功率约 13%～20%；失败数据和原因均如实保留。
+
+## AI 工具使用说明
+
+本项目在环境排查、代码调试、测试脚本设计、文档结构整理和录屏自动化过程中使用了 Codex、ZCode/Claude 等 AI 编程工具辅助。机器人模型、ROS 2 节点/Topic/TF、Nav2 参数、SLAM 对比方法和全部实验结论均由本人运行验证、理解后整理；AI 未替代实际仿真、建图或导航实验。详细过程见 `docs/development_record.md` 与 `docs/troubleshooting.md`。
+
 ## 安装
 
 ```bash
