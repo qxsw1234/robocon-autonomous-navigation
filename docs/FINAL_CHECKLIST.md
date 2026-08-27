@@ -2,6 +2,7 @@
 
 > 项目：diy_nav_bot ROS 2 自主导航机器人（Humble + Gazebo Classic 11）
 > 检查日期：2026-08-03
+> 最终更新：2026-08-27。提交视频采用约 120 秒的精简实录，完整讲解提纲保留在 `demo_script.md`；测试汇总为 34 tests、0 errors、0 failures、1 skipped。
 
 ## 1. 构建与测试
 
@@ -48,7 +49,7 @@
 - [x] 公平对比：同一 rosbag（582 s）离线回放 × 2
 - [x] 8 项指标 + 30 次导航试验 + 自动生成报告（结论数据驱动）
 
-## 7. 交付文档（docs/ 15 份）
+## 7. 交付文档（主要文档）
 
 - [x] project_overview.md
 - [x] system_architecture.md（Mermaid 5 图）
@@ -65,6 +66,7 @@
 - [x] troubleshooting.md（10 个实际错误，六段式）
 - [x] demo_script.md（15 节，含时长/屏幕/台词/命令/易错点）
 - [x] defense_questions.md（35 问，如实回答 Humble/Classic 决策）
+- [x] ros2_learning_notes.md（独立 ROS 2 学习过程记录）
 
 ## 8. 诚实性检查
 
