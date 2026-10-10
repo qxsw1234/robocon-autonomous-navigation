@@ -52,5 +52,6 @@
 ## 5. 与服务/动作接口的关系
 
 - 本阶段（仿真打通）仅涉及 Topic 与 TF；
-- SLAM / Navigation2 阶段新增的服务与 Action 接口
-  （`/map_server`、`/navigate_to_pose` 等）在 `docs/nav2_topics.md` 中说明。
+- SLAM / Navigation2 阶段新增的节点、服务与 Action 接口
+  （`/map_server`、`/navigate_to_pose` 等）在 `docs/ros2_nodes.md`（节点层）与
+  `docs/topic_list.md`（Topic / Action 清单）中说明。
