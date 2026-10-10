@@ -11,7 +11,7 @@ AMCL 定位 → Navigation2 自主导航 → 一键启动。
 
 - **2.1 普通题**：DIY URDF/Xacro 机器人、自建 Gazebo 世界、SLAM Toolbox、AMCL、Navigation2 和自主导航闭环均已完成。
 - **2.2 拓展题**：已部署 Cartographer，并使用同一个 rosbag 与 SLAM Toolbox 做 8 项指标和 30 次导航试验对比。
-- **演示视频**：`results/videos/demo_navigation_rviz.mp4`，包含地图、机器人、全局路径、LaserScan、粒子云及实际自主导航过程；录制中第一个 7.5 m 走廊目标成功到达。
+- **演示视频**：`results/videos/demo_navigation_rviz_labeled.mp4`，包含地图、机器人、全局路径、LaserScan、粒子云及实际自主导航过程；录制中第一个 7.5 m 走廊目标成功到达。
 - **已知限制**：复杂长路线受 AMCL 走廊歧义影响，整体成功率约 13%～20%；失败数据和原因均如实保留。
 
 ## AI 工具使用说明
